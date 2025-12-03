@@ -1,9 +1,23 @@
+import os
+
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Image  # 导入ROS图像消息类型
 from cv_bridge import CvBridge  # 导入ROS-OpenCV转换桥梁
 import cv2  # 导入OpenCV
 
+import torch
+import torchvision.transforms as T
+from PIL import Image, ImageDraw, ImageFont
+import numpy as np
+try:
+    from .external_models.RT_DETR_V2.src.core import YAMLConfig
+    from .external_models.RT_DETR_V2.src.zoo.rtdetr.rtdetr import RTDETR
+except ImportError as e:
+    print(f"Import RT-DETR failed: {e}")
+    raise e
+
+from ai_msgs.msg import Detection, DetectionArray
 
 class PerceptionNode(Node):
     def __init__(self):
@@ -22,7 +36,76 @@ class PerceptionNode(Node):
             10  # QoS (队列长度)
         )
 
-        self.get_logger().info("Perception Node has been started! Waiting for images...")
+        # 4. 创建发布者 (Publisher)
+        self.publisher = self.create_publisher(
+            DetectionArray,
+            'brain/detections',
+            10
+        )
+        self.get_logger().info("Perception Node has been started! Initializing vision model...")
+        rt_detr_model = self.load_rt_detr_model()
+
+    def load_rt_detr_model(self):
+        self.get_logger().info("Loading vision model...")
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+
+        # 自动拼接出权重文件的路径
+        # 这样无论你把项目拷到哪里，它都能找到权重
+        checkpoint_path = os.path.join(current_dir, "weights", "rtdetrv2_r50vd_6x_coco_full.pth")  # TODO: 更优雅的方式设定文件名(config文件)
+        model_config = os.path.join(current_dir, "external_models", "RT_DETR_V2", "configs", "rtdetrv2", "rtdetrv2_r50vd_6x_coco.yml") # TODO: 更优雅的方式设定配置文件名(config文件)
+
+        if not os.path.exists(checkpoint_path) or not os.path.isfile(checkpoint_path):
+            self.get_logger().error(f"Cannot found checkpoint in  {checkpoint_path}")
+            return None
+            # TODO: 错误处理
+
+        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        CLASSES = [
+            'person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'train', 'truck', 'boat', 'traffic light',
+            'fire hydrant', 'stop sign', 'parking meter', 'bench', 'bird', 'cat', 'dog', 'horse', 'sheep', 'cow',
+            'elephant', 'bear', 'zebra', 'giraffe', 'backpack', 'umbrella', 'handbag', 'tie', 'suitcase', 'frisbee',
+            'skis', 'snowboard', 'sports ball', 'kite', 'baseball bat', 'baseball glove', 'skateboard', 'surfboard',
+            'tennis racket', 'bottle', 'wine glass', 'cup', 'fork', 'knife', 'spoon', 'bowl', 'banana', 'apple',
+            'sandwich', 'orange', 'broccoli', 'carrot', 'hot dog', 'pizza', 'donut', 'cake', 'chair', 'couch',
+            'potted plant', 'bed', 'dining table', 'toilet', 'tv', 'laptop', 'mouse', 'remote', 'keyboard',
+            'cell phone',
+            'microwave', 'oven', 'toaster', 'sink', 'refrigerator', 'book', 'clock', 'vase', 'scissors', 'teddy bear',
+            'hair drier', 'toothbrush'
+        ]
+
+        try:
+            conf = YAMLConfig(model_config, resume=None)
+            model = conf.model.to(device)
+            model.eval()
+        except Exception as model_build_err:
+            self.get_logger().error(f"❌ Cannot build rt-detr model: {model_build_err}")
+            return None
+
+        # --- 2. 加载权重 ---
+        self.get_logger().info(f"Loading checkpoint from {checkpoint_path}...")
+        checkpoint = torch.load(checkpoint_path, map_location='cpu')
+
+        # 智能提取 state_dict
+        if 'ema' in checkpoint:
+            self.get_logger().info("ℹ️ Using EMA weights")
+            state_dict = checkpoint['ema']['module'] if 'module' in checkpoint['ema'] else checkpoint['ema']
+        elif 'model' in checkpoint:
+            self.get_logger().info("ℹ️ Using Model weights")
+            state_dict = checkpoint['model']
+        else:
+            state_dict = checkpoint
+
+        # 去除 module. 前缀
+        new_state_dict = {}
+        for k, v in state_dict.items():
+            if k.startswith('module.'):
+                new_state_dict[k[7:]] = v
+            else:
+                new_state_dict[k] = v
+
+        msg = model.load_state_dict(new_state_dict, strict=False)
+        self.get_logger().info(f"Weights loaded. Missing keys: {len(msg.missing_keys)}")
+        return model
 
     def image_callback(self, msg):
         """
