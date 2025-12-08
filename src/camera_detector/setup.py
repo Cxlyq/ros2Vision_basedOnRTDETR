@@ -6,6 +6,14 @@ setup(
     name=package_name,
     version='0.0.0',
     packages=find_packages(exclude=['test']),
+
+    package_data={
+        package_name: [
+            'weights/*.pth',        # 包含 weights 目录下的模型
+            'external_models/**/*', # 递归包含 external_models 下的所有文件(包括yml config)
+        ]
+    },
+
     data_files=[
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
@@ -15,8 +23,8 @@ setup(
     zip_safe=True,
     maintainer='cx',
     maintainer_email='cx3348269780@outlook.com',
-    description='TODO: Package description',
-    license='TODO: License declaration',
+    description='RT-DETR Perception Node',
+    license='Apache-3.0',
     extras_require={
         'test': [
             'pytest',

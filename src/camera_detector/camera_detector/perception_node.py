@@ -19,7 +19,6 @@ except ImportError as import_err:
 
 from ai_msgs.msg import Detection, DetectionArray
 
-
 class PerceptionNode(Node):
     def __init__(self):
         # 1. 初始化节点，名字叫 'perception_node'
@@ -85,15 +84,15 @@ class PerceptionNode(Node):
 
 
     def load_rt_detr_model(self):
-        self.get_logger().info("Loading vision model...")
+        self.get_logger().info("Loading vision model weights...")
 
         # 1. 获取文件名参数 (Elegance: 文件名不写死在代码里)
         weights_name = self.get_parameter('weights_file').value
         config_name = self.get_parameter('config_file').value
         # 自动拼接出权重文件的路径
         current_dir = os.path.dirname(os.path.abspath(__file__))
-        checkpoint_path = os.path.join(current_dir, "weights", str(weights_name))  # TODO: 更优雅的方式设定文件名(config文件)
-        model_config_path = os.path.join(current_dir, "external_models", "RT_DETR_V2", "configs", "rtdetrv2", str(config_name)) # TODO: 更优雅的方式设定配置文件名(config文件)
+        checkpoint_path = os.path.join(current_dir, "weights", str(weights_name))
+        model_config_path = os.path.join(current_dir, "external_models", "RT_DETR_V2", "configs", "rtdetrv2", str(config_name))
 
         if not os.path.exists(checkpoint_path):
             self.get_logger().error(f"Cannot found checkpoint in  {checkpoint_path}")
@@ -210,12 +209,16 @@ class PerceptionNode(Node):
                 box = valid_boxes[i].cpu().numpy()  # [cx, cy, w, h] (0-1)
                 score = valid_scores[i].item()
                 class_id = valid_classes[i].item()
-                # 类别名称
-                label = self.classes[class_id]
 
                 # 还原坐标
                 cx, cy, bw, bh = box
                 cx, cy, bw, bh = cx * w, cy * h, bw * w, bh * h
+
+                # 安全检查：防止 class_id 超出我们定义的列表范围
+                if class_id < len(self.classes):
+                    label = self.classes[class_id]
+                else:
+                    label = "unknown"
 
                 # 整合Detection消息
                 detection_msg = Detection()
@@ -232,8 +235,9 @@ class PerceptionNode(Node):
                 detection_array_msg.detections.append(detection_msg)
 
         # 发送消息
-        self.publisher.publish(detection_array_msg)
-        self.get_logger().info(f"Published {len(detection_array_msg.detections)} objects.")
+        if len(detection_array_msg.detections) > 0:
+            self.publisher.publish(detection_array_msg)
+            self.get_logger().info(f"Published {len(detection_array_msg.detections)} objects.")
 
 
 def main(args=None):
