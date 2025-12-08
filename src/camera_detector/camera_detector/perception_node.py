@@ -82,6 +82,8 @@ class PerceptionNode(Node):
             10
         )
 
+        self.get_logger().info("Perception node initialized successfully! Waiting for image message...")
+
 
     def load_rt_detr_model(self):
         self.get_logger().info("Loading vision model weights...")
@@ -96,7 +98,7 @@ class PerceptionNode(Node):
 
         if not os.path.exists(checkpoint_path):
             self.get_logger().error(f"Cannot found checkpoint in  {checkpoint_path}")
-            raise FileNotFoundError(f"Cannot found checkpoint in  {checkpoint_path}")
+            raise FileNotFoundError(f"Checkpoint missing:  {checkpoint_path}")
         if not os.path.isfile(model_config_path):
             self.get_logger().error(f"Cannot found checkpoint in  {checkpoint_path}")
             raise FileNotFoundError(f"Config file missing: {model_config_path}")
@@ -149,7 +151,7 @@ class PerceptionNode(Node):
 
     def image_callback(self, msg):
         """
-        brief: 这是回调函数，每次收到一张图就会被调用一次
+        brief: 回调函数，每次收到一张图就会被调用一次
         param: msg ROS 发过来的原始图像数据
         """
         cv_image = None
@@ -248,11 +250,16 @@ def main(args=None):
         rclpy.spin(node)  # 让节点一直转圈，保持监听状态
     except KeyboardInterrupt:
         pass
+    except Exception as unknown_err:
+        node.get_logger().error(f"Unknown exception: {unknown_err}")
     finally:
         # 销毁节点，释放资源
-        node.destroy_node()
-        rclpy.shutdown()
         cv2.destroyAllWindows()
+        node.destroy_node()
+
+        if rclpy.ok():
+            rclpy.shutdown()
+        print("\n\033[92m[Perception Node] [Info] Exited Cleanly.\033[0m")  # 绿色字体提示
 
 
 if __name__ == '__main__':
