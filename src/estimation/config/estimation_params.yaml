@@ -1,0 +1,20 @@
+
+estimation_node:
+  ros__parameters:
+    # --- 相机内参 (从 /camera/camera_info 获取) ---
+    camera_fx: 500.0  # 水平焦距 (像素)
+    camera_fy: 500.0  # 垂直焦距 (像素)
+    camera_cx: 320.0  # 光心 X (通常是图像宽度/2)
+    camera_cy: 240.0  # 光心 Y (通常是图像高度/2)
+
+    # --- 相机安装参数 (物理测量) ---
+    camera_height: 0.15  # 相机离地高度 (米) - 这是一个关键参数
+    camera_tilt: 0.0     # 相机俯仰角 (弧度), 0表示水平, 向下看为正
+
+    # --- 系统设置 ---
+    odom_frame: "odom"        # 世界坐标系的名字
+    base_frame: "base_link"   # 机器人底盘坐标系的名字
+    camera_frame: "camera_link" # 相机坐标系的名字 (TF树里用的)
+    match_distance_threshold: 0.5 # 阻止遗忘的距离场
+    smooth_param: 0.8 # 位置平滑更新
+    missed_frames: 10 # 遗忘临界帧数

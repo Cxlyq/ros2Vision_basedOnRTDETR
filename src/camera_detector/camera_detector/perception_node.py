@@ -9,7 +9,7 @@ import cv2  # 导入OpenCV
 import torch
 import torchvision.transforms as T
 from PIL import Image as PILImage
-import numpy as np
+
 try:
     from .external_models.RT_DETR_V2.src.core import YAMLConfig
     from .external_models.RT_DETR_V2.src.zoo.rtdetr.rtdetr import RTDETR
@@ -154,7 +154,6 @@ class PerceptionNode(Node):
         brief: 回调函数，每次收到一张图就会被调用一次
         param: msg ROS 发过来的原始图像数据
         """
-        cv_image = None
         try:
             # 将 ROS 图像消息转换为 OpenCV 图像
             # 语法: self.bridge.imgmsg_to_cv2(消息对象, 目标编码)

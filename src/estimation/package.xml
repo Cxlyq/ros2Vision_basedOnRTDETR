@@ -5,13 +5,17 @@
   <version>0.0.0</version>
   <description>TODO: Package description</description>
   <maintainer email="cx3348269780@outlook.com">cx</maintainer>
-  <license>TODO: License declaration</license>
+  <license>Apache-2.0</license>
 
   <depend>rclpy</depend>
   <depend>sensor_msgs</depend>
   <depend>cv_bridge</depend>
   <depend>ai_msgs</depend>
   <depend>camera_detector</depend>
+
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
+  <exec_depend>tf2_geometry_msgs</exec_depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>

@@ -30,7 +30,7 @@ setup(
     maintainer='cx',
     maintainer_email='cx3348269780@outlook.com',
     description='RT-DETR Perception Node',
-    license='Apache-3.0',
+    license='Apache-2.0',
     extras_require={
         'test': [
             'pytest',
