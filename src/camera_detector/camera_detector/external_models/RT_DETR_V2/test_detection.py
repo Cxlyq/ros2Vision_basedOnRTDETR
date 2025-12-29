@@ -9,13 +9,10 @@ import os
 IMAGE_PATH = 'test.jpg' 
 OUTPUT_PATH = 'result_v2.jpg'
 
-# 2. RT-DETRv2 的权重文件 (请确认文件名是否完全一致)
-# 注意：你提到的文件名是 rtdetrv2_r50vd_x6_coco_full.pth (注意是 6x 还是 x6，一般官方是 6x)
-# 这里假设你下载的文件名如下，如果不同请修改：
-CHECKPOINT = './../weights/rtdetrv2_r50vd_6x_coco_full.pth'
+# 2. RT-DETRv2 的权重文件
+CHECKPOINT = './../../weights/rtdetrv2_r50vd_6x_coco_full.pth'
 
 # 3. RT-DETRv2 的配置文件
-# 官方仓库中 v2 的配置通常在 configs/rtdetrv2/ 目录下
 CONFIG = './configs/rtdetrv2/rtdetrv2_r50vd_6x_coco.yml'
 
 # 4. 设备
@@ -54,7 +51,7 @@ def main():
         print("可能是代码仓库版本旧，缺少 RT-DETRv2 的源码。建议 git pull 更新一下。")
         return
 
-    # --- 2. 加载权重 (复用之前的成功逻辑) ---
+    # --- 2. 加载权重 ---
     print(f"Loading checkpoint from {CHECKPOINT}...")
     if not os.path.exists(CHECKPOINT):
         print(f"❌ 错误：找不到权重文件 {CHECKPOINT}")
