@@ -13,12 +13,12 @@ import atexit
 
 import torch
 import torch.nn as nn 
-import torch.distributed
+# import torch.distributed
 import torch.backends.cudnn
 
 from torch.nn.parallel import DataParallel as DP
 from torch.nn.parallel import DistributedDataParallel as DDP
-from torch.distributed.fsdp import FullyShardedDataParallel as FSDP
+# from torch.distributed.fsdp import FullyShardedDataParallel as FSDP
 
 from torch.utils.data import DistributedSampler
 # from torch.utils.data.dataloader import DataLoader
@@ -33,25 +33,9 @@ def setup_distributed(print_rank: int=0, print_method: str='builtin', seed: int=
         print_method, (builtin, rich)
         seed, 
     """
-    try:
-        # https://pytorch.org/docs/stable/elastic/run.html
-        RANK = int(os.getenv('RANK', -1))
-        LOCAL_RANK = int(os.getenv('LOCAL_RANK', -1))  
-        WORLD_SIZE = int(os.getenv('WORLD_SIZE', 1))
-        
-        # torch.distributed.init_process_group(backend=backend, init_method='env://')
-        torch.distributed.init_process_group(init_method='env://')
-        torch.distributed.barrier()
 
-        rank = torch.distributed.get_rank()
-        torch.cuda.set_device(rank)
-        torch.cuda.empty_cache()
-        enabled_dist = True
-        print('Initialized distributed mode...')
-
-    except:
-        enabled_dist = False
-        print('Not init distributed mode.')
+    enabled_dist = False
+    print('Not init distributed mode.')
 
     setup_print(get_rank() == print_rank, method=print_method)
     if seed is not None:
@@ -84,11 +68,7 @@ def setup_print(is_main, method='builtin'):
 
 
 def is_dist_available_and_initialized():
-    if not torch.distributed.is_available():
-        return False
-    if not torch.distributed.is_initialized():
-        return False
-    return True
+    return False
 
 
 @atexit.register
@@ -101,19 +81,15 @@ def cleanup():
 
 
 def get_rank():
-    if not is_dist_available_and_initialized():
-        return 0
-    return torch.distributed.get_rank()
+    return 0
 
 
 def get_world_size():
-    if not is_dist_available_and_initialized():
-        return 1
-    return torch.distributed.get_world_size()
+    return 1
 
     
 def is_main_process():
-    return get_rank() == 0
+    return True
 
 
 def save_on_master(*args, **kwargs):
