@@ -63,6 +63,42 @@ ros2 run turtlebot3_teleop teleop_keyboard
 ros2 run rqt_image_view rqt_image_view
 ```
 
+## 多端仿真说明
+ROS支持多端仿真，即可以在pc1跑虚拟仿真，在pc2接受pc1的topic
+启用多端仿真，需要保证ROS_DOMAIN_ID一致
+```shell
+export ROS_DOMAIN_ID=30
+```
+为了避免多网卡出现问题，需要使用cyclonedds指定网卡
+```shell
+export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+export CYCLONEDDS_URI='<CycloneDDS><Domain><General><NetworkInterfaceAddress>wlan0</NetworkInterfaceAddress></General></Domain></CycloneDDS>'
+```
+jetson **docker** 也进行一样的配置，注意更改网卡名称
+
+docker要添加启动参数--net=host保证网络畅通
+
+Jetson docker image镜像无法安装cyclonedds，需要下载源码编译:
+```shell
+cd /root/Projects/ros2_vision/src
+
+# 1. 下载 CycloneDDS 核心库 (Humble 对应 0.10.x 版本)
+git clone -b releases/0.10.x https://github.com/eclipse-cyclonedds/cyclonedds.git
+
+# 2. 下载 ROS 2 RMW 接口
+git clone -b humble https://github.com/ros2/rmw_cyclonedds.git
+
+cd cyclonedds
+# 切换低版本，防止无法编译
+git checkout releases/0.9.x
+
+cd ../..
+# 只编译这两个相关的包，节省时间
+colcon build --packages-up-to rmw_cyclonedds_cpp
+
+source install/setup.bash
+```
+
 ## 意外修复
 - 清理多个僵尸进程导致的卡顿
 ```bash
