@@ -54,6 +54,7 @@ class EstimationNode(Node):
         self.obstacles_long_term_memory : list[ObstacleTracker] = []
         self.obstacles_temp_term_memory : list[ObstacleTracker] = []
         self.frame_count = 0
+        self.o_id_counter = 0
 
         # --- 创建订阅者 ---
         # 订阅 RT-DETR 发出的检测框
@@ -201,7 +202,12 @@ class EstimationNode(Node):
                 best_match.last_seen = self.frame_count
             else:
                 # 没找到：这是个新障碍物
+                # 新障碍物添加到长期记忆时，为其分配唯一的id
+                new_obs.obstacle_id = self.o_id_counter
+                self.o_id_counter += 1
                 self.obstacles_long_term_memory.append(new_obs)
+
+
 
         # 2. 清理过程 (遗忘)
         # 倒序遍历以便安全删除
