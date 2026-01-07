@@ -6,7 +6,7 @@ import math
 # 导入消息类型
 from ai_msgs.msg import DetectionArray, ObstacleInfo, ObstacleArray
 from geometry_msgs.msg import Point
-from src.estimation.estimation.obstacle_tracker import ObstacleTracker
+from .obstacle_tracker import ObstacleTracker
 
 # TF2 库
 from tf2_ros import Buffer, TransformListener
@@ -72,6 +72,7 @@ class EstimationNode(Node):
             '/brain/obstacles',
             10
         )
+        self.get_logger().info("Estimation node initialized successfully! Waiting for detection message...")
 
     def calculate_position_from_pixels(self, u, v):
         """
@@ -239,3 +240,24 @@ class EstimationNode(Node):
             obstacle_info_msg.lateral = obstacle.obstacle_lateral
             obstacle_array_msg.obstacles.append(obstacle_info_msg)
         return obstacle_array_msg
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = EstimationNode()
+
+    try:
+        rclpy.spin(node)  # 让节点一直转圈，保持监听状态
+    except KeyboardInterrupt:
+        pass
+    except Exception as unknown_err:
+        node.get_logger().error(f"Unknown exception: {unknown_err}")
+    finally:
+        # 销毁节点，释放资源
+        node.destroy_node()
+        if rclpy.ok():
+            rclpy.shutdown()
+        print("\n\033[92m[Estimation Node] [Info] Exited Cleanly.\033[0m")  # 绿色字体提示
+
+
+if __name__ == '__main__':
+    main()
