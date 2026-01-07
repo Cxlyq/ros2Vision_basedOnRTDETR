@@ -191,13 +191,14 @@ class EstimationNode(Node):
                 if dist < min_dist and dist < self.match_distance_threshold and new_obs.obstacle_label == known_obs.obstacle_label:
                     min_dist = dist
                     best_match = known_obs
-# TODO:添加last_seen更新
+
             if best_match:
                 # 找到了：更新位置 (可以使用加权平均来平滑抖动)
-                # 简单的移动平均: 新位置 = 旧位置 * 0.8 + 新位置 * 0.2 TODO
+                # 简单的移动平均: 新位置 = 旧位置 * 0.8 + 新位置 * 0.2
                 best_match.obstacle_position_glob.point.x = new_obs.obstacle_position_glob.point.x * (1-self.smooth_param) + best_match.obstacle_position_glob.point.x * self.smooth_param
                 best_match.obstacle_position_glob.point.y = new_obs.obstacle_position_glob.point.y * (1-self.smooth_param) + best_match.obstacle_position_glob.point.y * self.smooth_param
                 best_match.missed_frames = 0
+                best_match.last_seen = self.frame_count
             else:
                 # 没找到：这是个新障碍物
                 self.obstacles_long_term_memory.append(new_obs)
