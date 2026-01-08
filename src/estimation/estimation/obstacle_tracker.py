@@ -1,5 +1,6 @@
 from geometry_msgs.msg import PointStamped
 
+# TODO: 修改o_id，使其为每个障碍物生成id，而不是挪用类别id
 class ObstacleTracker:
     def __init__(self, o_id: int, o_label: str, o_score: float, o_position_glob: PointStamped, o_distance: float, o_lateral: float, o_last_seen: int):
         self.obstacle_id = o_id

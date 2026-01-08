@@ -6,7 +6,7 @@ import math
 # 导入消息类型
 from ai_msgs.msg import DetectionArray, ObstacleInfo, ObstacleArray
 from geometry_msgs.msg import Point
-from src.estimation.estimation.obstacle_tracker import ObstacleTracker
+from .obstacle_tracker import ObstacleTracker
 
 # TF2 库
 from tf2_ros import Buffer, TransformListener
@@ -54,6 +54,7 @@ class EstimationNode(Node):
         self.obstacles_long_term_memory : list[ObstacleTracker] = []
         self.obstacles_temp_term_memory : list[ObstacleTracker] = []
         self.frame_count = 0
+        self.o_id_counter = 0
 
         # --- 创建订阅者 ---
         # 订阅 RT-DETR 发出的检测框
@@ -71,6 +72,7 @@ class EstimationNode(Node):
             '/brain/obstacles',
             10
         )
+        self.get_logger().info("Estimation node initialized successfully! Waiting for detection message...")
 
     def calculate_position_from_pixels(self, u, v):
         """
@@ -194,13 +196,19 @@ class EstimationNode(Node):
 
             if best_match:
                 # 找到了：更新位置 (可以使用加权平均来平滑抖动)
-                # 简单的移动平均: 新位置 = 旧位置 * 0.8 + 新位置 * 0.2 TODO
+                # 简单的移动平均: 新位置 = 旧位置 * 0.8 + 新位置 * 0.2
                 best_match.obstacle_position_glob.point.x = new_obs.obstacle_position_glob.point.x * (1-self.smooth_param) + best_match.obstacle_position_glob.point.x * self.smooth_param
                 best_match.obstacle_position_glob.point.y = new_obs.obstacle_position_glob.point.y * (1-self.smooth_param) + best_match.obstacle_position_glob.point.y * self.smooth_param
                 best_match.missed_frames = 0
+                best_match.last_seen = self.frame_count
             else:
                 # 没找到：这是个新障碍物
+                # 新障碍物添加到长期记忆时，为其分配唯一的id
+                new_obs.obstacle_id = self.o_id_counter
+                self.o_id_counter += 1
                 self.obstacles_long_term_memory.append(new_obs)
+
+
 
         # 2. 清理过程 (遗忘)
         # 倒序遍历以便安全删除
@@ -232,3 +240,24 @@ class EstimationNode(Node):
             obstacle_info_msg.lateral = obstacle.obstacle_lateral
             obstacle_array_msg.obstacles.append(obstacle_info_msg)
         return obstacle_array_msg
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = EstimationNode()
+
+    try:
+        rclpy.spin(node)  # 让节点一直转圈，保持监听状态
+    except KeyboardInterrupt:
+        pass
+    except Exception as unknown_err:
+        node.get_logger().error(f"Unknown exception: {unknown_err}")
+    finally:
+        # 销毁节点，释放资源
+        node.destroy_node()
+        if rclpy.ok():
+            rclpy.shutdown()
+        print("\n\033[92m[Estimation Node] [Info] Exited Cleanly.\033[0m")  # 绿色字体提示
+
+
+if __name__ == '__main__':
+    main()
