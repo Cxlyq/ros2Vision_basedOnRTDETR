@@ -30,6 +30,7 @@ __pycache__/
 *.pt
 *.onnx
 *.engine
+*.jpg
 # 数据集忽略
 coco/
 output/
@@ -39,3 +40,9 @@ output/
 # ===========================
 .DS_Store
 
+# ===========================
+# Outside lib
+# ===========================
+
+src/cyclonedds/
+src/rmw_cyclonedds/
