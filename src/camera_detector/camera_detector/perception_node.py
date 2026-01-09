@@ -69,9 +69,9 @@ class PerceptionNode(Node):
         # 5. 创建订阅者 (Subscriber)
         # 语法: self.create_subscription(消息类型, 话题名, 回调函数, 队列长度)
         self.subscription = self.create_subscription(
-            Image,  # 消息类型是什么？(提示：看上面的 import)
-            '/camera/image_raw',  # Gazebo 的相机话题名是什么？
-            self.image_callback,  # 收到图后，交给哪个函数处理？(提示：是下面定义的那个函数)
+            Image,  # 消息类型
+            '/camera/image_raw',  # Gazebo 的相机话题名
+            self.image_callback,  # 回调函数
             10  # QoS (队列长度)
         )
 

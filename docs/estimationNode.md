@@ -76,6 +76,6 @@ missed_frames由update_memory函数进行维护，代表某一长期记忆中的
 
 已为estimation_node配置了ros launch
 ```shell
-ros2 launch estimation_node estimation.launch.py
+ros2 launch estimation estimation.launch.py
 ```
 

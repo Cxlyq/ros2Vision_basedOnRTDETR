@@ -97,10 +97,10 @@ sudo apt install -y nvidia-docker2
 - 验证GPU穿透
 ```bash
 sudo systemctl restart docker
-sudo docker run --rm --runtime=nvidia --gpus all nvcr.io/nvidia/l4t-base:r35.2.1 nvidia-smi
+sudo docker run --rm --runtime=nvidia --gpus all nvcr.io/nvidia/l4t-base:r35.3.1 nvidia-smi
 ```
 
 ## 拉取开发镜像
 ```bash
-sudo docker pull dustynv/ros:humble-pytorch-l4t-r35.2.1
+sudo docker pull dustynv/ros:humble-pytorch-l4t-r35.3.1
 ```
