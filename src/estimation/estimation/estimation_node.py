@@ -131,8 +131,8 @@ class EstimationNode(Node):
                 # 提取识别置信度
                 score = detection.score
                 # 提取框的底部中心点
-                u = detection.bbox.x
-                v = detection.bbox.y + detection.bbox.h / 2.0
+                u = detection.x_center
+                v = detection.y_center + detection.height / 2.0
 
                 # A. 算出相对距离 (相对于相机)
                 dist, lat = self.calculate_position_from_pixels(u, v)
@@ -226,6 +226,7 @@ class EstimationNode(Node):
 
         # 清空短期记忆，为下一帧做准备
         self.obstacles_temp_term_memory.clear()
+        self.get_logger().info(f"\033[92mCurrent long-term Memory size: [{len(self.obstacles_long_term_memory)}]\033[0m")
 
 
     def mem2msg(self):
@@ -235,7 +236,7 @@ class EstimationNode(Node):
             obstacle_info_msg.id = obstacle.obstacle_id
             obstacle_info_msg.label = obstacle.obstacle_label
             obstacle_info_msg.score = obstacle.obstacle_score
-            obstacle_info_msg.position_odom = obstacle.obstacle_position_glob
+            obstacle_info_msg.position_odom = obstacle.obstacle_position_glob.point
             obstacle_info_msg.distance = obstacle.obstacle_distance
             obstacle_info_msg.lateral = obstacle.obstacle_lateral
             obstacle_array_msg.obstacles.append(obstacle_info_msg)
