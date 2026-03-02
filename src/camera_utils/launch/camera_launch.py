@@ -26,8 +26,12 @@ def generate_launch_description():
             name='stereo_splitter',
             parameters=[{
                 'input_topic': '/image_raw',
-                'left_topic': '/camera/left/image_raw',
-                'right_topic': '/camera/right/image_raw'
+                'left_img_topic': '/camera/left/image_raw',
+                'right_img_topic': '/camera/right/image_raw',
+                'left_info_topic': '/camera/left/camera_info',
+                'right_info_topic': '/camera/right/camera_info',
+                'left_yaml_path': '/home/cx/Documents/codes/ros_vision/config/camera_info/left.yaml',
+                'right_yaml_path': '/home/cx/Documents/codes/ros_vision/config/camera_info/right.yaml'
             }]
         )
     ])
