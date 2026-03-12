@@ -3,6 +3,7 @@ from rclpy.node import Node
 from sensor_msgs.msg import Image, CameraInfo
 from cv_bridge import CvBridge
 import yaml
+from std_msgs.msg import Header
 
 
 class StereoSplitterNode(Node):
@@ -73,15 +74,31 @@ class StereoSplitterNode(Node):
                 calib_data = yaml.safe_load(file_handle)
 
             # 填充 CameraInfo 数据
-            info.width = calib_data['image_width']
-            info.height = calib_data['image_height']
+            info.width = int(calib_data['image_width'])
+            info.height = int(calib_data['image_height'])
             info.distortion_model = calib_data.get('distortion_model', 'plumb_bob')
 
-            # ROS yaml 中的矩阵通常存储在 'data' 字段中
-            info.k = calib_data['camera_matrix']['data']
-            info.d = calib_data['distortion_coefficients']['data']
-            info.r = calib_data['rectification_matrix']['data']
-            info.p = calib_data['projection_matrix']['data']
+            # ROS yaml 中的矩阵存储在 'data' 字段中
+            k_list = [float(x) for x in calib_data['camera_matrix']['data']]
+            if len(k_list) != 9:
+                self.get_logger().error(f"K matrix size mismatch in {yaml_path}")
+            info.k = k_list
+
+            # D 矩阵 (畸变系数) 长度不定，但必须是 float
+            info.d = [float(x) for x in calib_data['distortion_coefficients']['data']]
+
+            # R 矩阵必须是 9 个数
+            r_list = [float(x) for x in calib_data['rectification_matrix']['data']]
+            if len(r_list) != 9:
+                # 如果 yaml 里 R 是空的或单位矩阵，这里最好给个默认值
+                pass
+            info.r = r_list
+
+            # P 矩阵必须是 12 个数
+            p_list = [float(x) for x in calib_data['projection_matrix']['data']]
+            if len(p_list) != 12:
+                self.get_logger().error(f"P matrix size mismatch in {yaml_path}")
+            info.p = p_list
 
             self.get_logger().info(f"Successfully loaded {yaml_path}")
             return info
@@ -98,30 +115,37 @@ class StereoSplitterNode(Node):
             width_half = width // 2
 
             # 裁剪
-            right_image = cv_image[:, :width_half]
-            left_image = cv_image[:, width_half:]
+            right_image = cv_image[:, width_half:]
+            left_image = cv_image[:, :width_half]
 
             # --- 构建消息 ---
             # 关键点：Frame ID 必须对应。
-            # 这里的 frame_id 需要和 TF 树中的定义一致
             left_frame_id = "camera_left_link"
             right_frame_id = "camera_right_link"
 
+            common_stamp = msg.header.stamp
+
             # 1. 左相机图像消息
+            left_header = Header()
+            left_header.stamp = common_stamp
+            left_header.frame_id = left_frame_id
+
             left_img_msg = self.bridge.cv2_to_imgmsg(left_image, encoding='bgr8')
-            left_img_msg.header = msg.header
-            left_img_msg.header.frame_id = left_frame_id
+            left_img_msg.header = left_header
 
             # 2. 右相机图像消息
+            right_header = Header()
+            right_header.stamp = common_stamp
+            right_header.frame_id = right_frame_id
+
             right_img_msg = self.bridge.cv2_to_imgmsg(right_image, encoding='bgr8')
-            right_img_msg.header = msg.header
-            right_img_msg.header.frame_id = right_frame_id
+            right_img_msg.header = right_header
 
             # 3. 左相机内参消息
-            self.left_info_msg.header = left_img_msg.header  # 必须完全同步
+            self.left_info_msg.header = left_header  # 必须完全同步
 
             # 4. 右相机内参消息
-            self.right_info_msg.header = right_img_msg.header  # 必须完全同步
+            self.right_info_msg.header = right_header  # 必须完全同步
 
             # 5. 发布
             self.pub_left_img.publish(left_img_msg)

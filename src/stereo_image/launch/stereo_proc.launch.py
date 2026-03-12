@@ -75,10 +75,10 @@ def generate_launch_description():
                 parameters=[{
                     'stereo_algorithm': 1,  # SGBM
                     'disparity_range': LaunchConfiguration('disparity_range'),
-                    'min_disparity': 0,
+                    'min_disparity': 1,
                     'correlation_window_size': 15,  # 稍微调大一点，图像更稳
                     'uniqueness_ratio': 15.0,
-                    'speckle_size': 500,  # 过滤掉小的噪点块
+                    'speckle_size': 100,  # 过滤掉小的噪点块
                     'speckle_range': 4,
                     'approximate_sync': False,  # 你有完美同步
                     'queue_size': 10
@@ -90,6 +90,25 @@ def generate_launch_description():
                     ('right/camera_info', '/camera/right/camera_info'),  # 输入右参
                     ('disparity', '/camera/disparity'),  # 输出视差
                     ('points2', '/camera/points2')  # 输出点云
+                ]
+            ),
+            # 4. 点云生成 (生成 PointCloud2)
+            ComposableNode(
+                package='stereo_image_proc',
+                plugin='stereo_image_proc::PointCloudNode',
+                name='point_cloud_node',
+                namespace='camera',
+                parameters=[{
+                    'approximate_sync': True,
+                    'queue_size': 10,
+                    'use_color': True,  # 生成彩色点云
+                }],
+                remappings=[
+                    ('left/image_rect_color', '/camera/left/image_rect'),  # 用校正后的图做颜色
+                    ('disparity', '/camera/disparity'),  # 用刚才生成的视差
+                    ('left/camera_info', '/camera/left/camera_info'),
+                    ('right/camera_info', '/camera/right/camera_info'),
+                    ('points2', '/camera/points2')
                 ]
             )
         ],
