@@ -27,7 +27,7 @@
     </collision>
     <inertial>
       <mass value="1.0"/>
-      <inertia ixx="0.002" ixy="0" ixz="0" iyy="0.002" iyz="0" izz="0.005"/>
+      <inertia ixx="0.00271" ixy="0" ixz="0" iyy="0.00271" iyz="0" izz="0.005"/>
     </inertial>
   </link>
   <joint name="left_wheel_joint" type="continuous">
@@ -48,7 +48,7 @@
     </collision>
     <inertial>
       <mass value="1.0"/>
-      <inertia ixx="0.002" ixy="0" ixz="0" iyy="0.002" iyz="0" izz="0.005"/>
+      <inertia ixx="0.00271" ixy="0" ixz="0" iyy="0.00271" iyz="0" izz="0.005"/>
     </inertial>
   </link>
   <joint name="right_wheel_joint" type="continuous">
