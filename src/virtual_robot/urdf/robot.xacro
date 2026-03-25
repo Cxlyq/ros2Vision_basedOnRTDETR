@@ -1,20 +1,14 @@
 <?xml version="1.0"?>
 <robot name="my_stereo_robot" xmlns:xacro="http://ros.org/wiki/xacro">
 
-  <!-- 1. 定义一个简单的方形底盘 -->
+  <!-- ================= 1. 核心底盘 ================= -->
   <link name="base_link">
     <visual>
-      <geometry>
-        <box size="0.4 0.3 0.1"/>
-      </geometry>
-      <material name="blue">
-        <color rgba="0 0 0.8 1"/>
-      </material>
+      <geometry><box size="0.4 0.3 0.1"/></geometry>
+      <material name="blue"><color rgba="0 0 0.8 1"/></material>
     </visual>
     <collision>
-      <geometry>
-        <box size="0.4 0.3 0.1"/>
-      </geometry>
+      <geometry><box size="0.4 0.3 0.1"/></geometry>
     </collision>
     <inertial>
       <mass value="5.0"/>
@@ -22,16 +16,81 @@
     </inertial>
   </link>
 
-  <!-- 2. 虚拟左右眼相机连杆 (这里只定义位置，真正的传感器在下面插件里) -->
-  <!-- 左眼：在车头，向左偏移 0.05m -->
+  <!-- ================= 2. 左轮 ================= -->
+  <link name="left_wheel">
+    <visual>
+      <geometry><cylinder radius="0.1" length="0.05"/></geometry>
+      <material name="black"><color rgba="0.1 0.1 0.1 1"/></material>
+    </visual>
+    <collision>
+      <geometry><cylinder radius="0.1" length="0.05"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="1.0"/>
+      <inertia ixx="0.002" ixy="0" ixz="0" iyy="0.002" iyz="0" izz="0.005"/>
+    </inertial>
+  </link>
+  <joint name="left_wheel_joint" type="continuous">
+    <parent link="base_link"/>
+    <child link="left_wheel"/>
+    <origin xyz="-0.1 0.175 -0.05" rpy="-1.5708 0 0"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <!-- ================= 3. 右轮 ================= -->
+  <link name="right_wheel">
+    <visual>
+      <geometry><cylinder radius="0.1" length="0.05"/></geometry>
+      <material name="black"><color rgba="0.1 0.1 0.1 1"/></material>
+    </visual>
+    <collision>
+      <geometry><cylinder radius="0.1" length="0.05"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="1.0"/>
+      <inertia ixx="0.002" ixy="0" ixz="0" iyy="0.002" iyz="0" izz="0.005"/>
+    </inertial>
+  </link>
+  <joint name="right_wheel_joint" type="continuous">
+    <parent link="base_link"/>
+    <child link="right_wheel"/>
+    <origin xyz="-0.1 -0.175 -0.05" rpy="-1.5708 0 0"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <!-- ================= 4. 前置万向轮 (支撑防刮地) ================= -->
+  <link name="caster">
+    <visual>
+      <geometry><sphere radius="0.05"/></geometry>
+      <material name="grey"><color rgba="0.6 0.6 0.6 1"/></material>
+    </visual>
+    <collision>
+      <geometry><sphere radius="0.05"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="0.5"/>
+      <inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/>
+    </inertial>
+  </link>
+  <joint name="caster_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="caster"/>
+    <origin xyz="0.15 0 -0.1" rpy="0 0 0"/>
+  </joint>
+  <!-- 取消万向轮的摩擦力，让它丝滑滑动 -->
+  <gazebo reference="caster">
+    <mu1>0.0</mu1>
+    <mu2>0.0</mu2>
+  </gazebo>
+
+  <!-- ================= 5. 双目相机 ================= -->
   <link name="camera_left_link" />
   <joint name="camera_left_joint" type="fixed">
     <parent link="base_link"/>
     <child link="camera_left_link"/>
-    <origin xyz="0.2 0.05 0.1" rpy="0 0 0"/> 
+    <origin xyz="0.2 0.05 0.1" rpy="0 0 0"/>
   </joint>
 
-  <!-- 右眼：在车头，向右偏移 0.05m (基线距离=0.1m) -->
   <link name="camera_right_link" />
   <joint name="camera_right_joint" type="fixed">
     <parent link="base_link"/>
@@ -39,59 +98,43 @@
     <origin xyz="0.2 -0.05 0.1" rpy="0 0 0"/>
   </joint>
 
-  <!-- ============================================== -->
-  <!-- 3. Gazebo Ignition 插件配置区 -->
-  <!-- ============================================== -->
+  <gazebo reference="camera_left_link">
+    <sensor name="left_camera" type="camera">
+      <camera>
+        <horizontal_fov>1.57</horizontal_fov>
+        <image><width>640</width><height>480</height></image>
+        <clip><near>0.1</near><far>100</far></clip>
+      </camera>
+      <always_on>1</always_on><update_rate>30</update_rate><visualize>true</visualize>
+      <topic>camera/left/image_raw</topic>
+    </sensor>
+  </gazebo>
+
+  <gazebo reference="camera_right_link">
+    <sensor name="right_camera" type="camera">
+      <camera>
+        <horizontal_fov>1.57</horizontal_fov>
+        <image><width>640</width><height>480</height></image>
+        <clip><near>0.1</near><far>100</far></clip>
+      </camera>
+      <always_on>1</always_on><update_rate>30</update_rate><visualize>true</visualize>
+      <topic>camera/right/image_raw</topic>
+    </sensor>
+  </gazebo>
+
+  <!-- ================= 6. 物理驱动插件 ================= -->
   <gazebo reference="base_link">
-    <!-- 加入差速驱动插件，监听 /cmd_vel 话题 -->
     <plugin filename="ignition-gazebo-diff-drive-system" name="ignition::gazebo::systems::DiffDrive">
-      <!-- 为了代码极度精简，这里省略了具体的轮子建模，使用插件内部虚拟差速 -->
-      <left_joint>dummy_left</left_joint>
-      <right_joint>dummy_right</right_joint>
-      <wheel_separation>0.3</wheel_separation>
+      <!-- 这里绑定到了真实的关节上 -->
+      <left_joint>left_wheel_joint</left_joint>
+      <right_joint>right_wheel_joint</right_joint>
+      <wheel_separation>0.35</wheel_separation>
       <wheel_radius>0.1</wheel_radius>
       <odom_publish_frequency>30</odom_publish_frequency>
-      <topic>cmd_vel</topic>
+      <topic>/cmd_vel</topic>
       <odom_topic>odom</odom_topic>
       <frame_id>odom</frame_id>
       <child_frame_id>base_link</child_frame_id>
     </plugin>
   </gazebo>
-
-  <!-- 配置左相机传感器 -->
-  <gazebo reference="camera_left_link">
-    <sensor name="left_camera" type="camera">
-      <camera>
-        <horizontal_fov>1.57</horizontal_fov>
-        <image>
-          <width>640</width>
-          <height>480</height>
-        </image>
-        <clip><near>0.1</near><far>100</far></clip>
-      </camera>
-      <always_on>1</always_on>
-      <update_rate>30</update_rate>
-      <visualize>true</visualize>
-      <topic>camera/left/image_raw</topic>
-    </sensor>
-  </gazebo>
-
-  <!-- 配置右相机传感器 -->
-  <gazebo reference="camera_right_link">
-    <sensor name="right_camera" type="camera">
-      <camera>
-        <horizontal_fov>1.57</horizontal_fov>
-        <image>
-          <width>640</width>
-          <height>480</height>
-        </image>
-        <clip><near>0.1</near><far>100</far></clip>
-      </camera>
-      <always_on>1</always_on>
-      <update_rate>30</update_rate>
-      <visualize>true</visualize>
-      <topic>camera/right/image_raw</topic>
-    </sensor>
-  </gazebo>
-
 </robot>
