@@ -18,7 +18,7 @@ behavior_server:
     footprint_topic: local_costmap/published_footprint
     cycle_frequency: 10.0
     # 声明所有的行为插件别名
-    behavior_plugins: ["spin", "backup", "drive_on_heading", "clear_local_costmap", "clear_global_costmap", "wait"]
+    behavior_plugins: ["spin", "backup", "drive_on_heading", "wait"]
 
     # 1. 原地旋转（用于重新扫描周围环境）
     spin:
@@ -32,17 +32,7 @@ behavior_server:
     drive_on_heading:
       plugin: "nav2_behaviors/DriveOnHeading"
 
-    # 4. 清除局部代价地图（非常关键！清理雷达噪点造成的假墙壁）
-    clear_local_costmap:
-      plugin: "nav2_behaviors/ClearCostmapService"
-      costmap_name: local_costmap
-
-    # 5. 清除全局代价地图
-    clear_global_costmap:
-      plugin: "nav2_behaviors/ClearCostmapService"
-      costmap_name: global_costmap
-
-    # 6. 原地等待（等动态障碍物走开）
+    # 4. 原地等待（等动态障碍物走开）
     wait:
       plugin: "nav2_behaviors/Wait"
 
@@ -56,9 +46,53 @@ controller_server:
     progress_checker_plugin: "progress_checker"
     goal_checker_plugins: ["general_goal_checker"]
     controller_plugins: ["FollowPath"]
-    # 使用 DWB 局部规划器
+    # 1. 定义进度检查器 (防止小车卡在原地不动)
+    progress_checker:
+      plugin: "nav2_controller::SimpleProgressChecker"
+      required_movement_radius: 0.5
+      movement_time_allowance: 10.0
+
+    # 2. 定义目标检查器 (这正是刚才报错缺失的部分！)
+    general_goal_checker:
+      plugin: "nav2_controller::SimpleGoalChecker"
+      xy_goal_tolerance: 0.25  # 到达目标的 X/Y 允许误差(米)
+      yaw_goal_tolerance: 0.25 # 到达目标的角度允许误差(弧度)
+      stateful: True
+
+    # 3. 使用 DWB 局部规划器
     FollowPath:
       plugin: "dwb_core::DWBLocalPlanner"
+      # ====== 小车运动学参数 ======
+      max_vel_x: 0.3        # 最大前进速度 (m/s)
+      min_vel_x: 0.0        # 最小前进速度 (不允许倒车，倒车由 behavior 负责)
+      max_vel_y: 0.0        # 最大侧向速度 (差速轮不能横行，必须为0)
+      min_vel_y: 0.0        # 最小侧向速度
+      max_vel_theta: 1.0    # 最大原地旋转角速度 (rad/s)
+      min_vel_theta: -1.0   # 最小旋转角速度
+      min_speed_xy: 0.0
+      max_speed_xy: 0.3
+      min_speed_theta: 0.0
+
+      acc_lim_x: 1.0        # X方向最大加速度
+      acc_lim_y: 0.0        # Y方向最大加速度
+      acc_lim_theta: 2.0    # 旋转最大加速度
+      decel_lim_x: -1.0     # X方向最大减速度
+      decel_lim_y: 0.0      # Y方向最大减速度
+      decel_lim_theta: -2.0 # 旋转最大减速度
+
+      vx_samples: 20        # X方向采样20条轨迹
+      vy_samples: 1         # Y方向采样1条 (因为不能横走)
+      vtheta_samples: 20    # 旋转采样20条轨迹
+      sim_time: 1.5         # 每次向前预测 1.5 秒的轨迹
+      # ==================================
+      critics: ["RotateToGoal", "Oscillation", "BaseObstacle", "GoalAlign", "PathAlign", "PathDist", "GoalDist"]
+      BaseObstacle.scale: 0.02   # 避障权重
+      PathAlign.scale: 32.0      # 贴合路径权重
+      GoalAlign.scale: 24.0      # 对齐目标权重
+      PathDist.scale: 32.0       # 距离路径权重
+      GoalDist.scale: 24.0       # 距离目标权重
+      RotateToGoal.scale: 32.0   # 原地旋转对齐权重
+      Oscillation.scale: 1.0     # 防止小车来回抖动的权重
 
 planner_server:
   ros__parameters:
@@ -77,8 +111,8 @@ local_costmap:
       global_frame: odom
       robot_base_frame: base_link
       rolling_window: true
-      width: 3.0
-      height: 3.0
+      width: 3
+      height: 3
       resolution: 0.05
       robot_radius: 0.175 # TB4近似轮廓
       plugins: ["obstacle_layer", "inflation_layer"]
