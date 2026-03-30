@@ -1,0 +1,125 @@
+amcl:
+  ros__parameters:
+    use_sim_time: True
+    # 我们不启动AMCL，但预留配置防报错
+
+bt_navigator:
+  ros__parameters:
+    use_sim_time: True
+    global_frame: map
+    robot_base_frame: base_link
+    odom_topic: /odom
+    default_bt_xml_filename: "navigate_to_pose_w_replanning_and_recovery.xml" # nav2预设的， 带重规划和恢复机制的默认树
+
+behavior_server:
+  ros__parameters:
+    use_sim_time: True
+    costmap_topic: local_costmap/costmap_raw
+    footprint_topic: local_costmap/published_footprint
+    cycle_frequency: 10.0
+    # 声明所有的行为插件别名
+    behavior_plugins: ["spin", "backup", "drive_on_heading", "clear_local_costmap", "clear_global_costmap", "wait"]
+
+    # 1. 原地旋转（用于重新扫描周围环境）
+    spin:
+      plugin: "nav2_behaviors/Spin"
+
+    # 2. 盲退（在卡死时往后退一点点）
+    backup:
+      plugin: "nav2_behaviors/BackUp"
+
+    # 3. 沿特定航向行驶
+    drive_on_heading:
+      plugin: "nav2_behaviors/DriveOnHeading"
+
+    # 4. 清除局部代价地图（非常关键！清理雷达噪点造成的假墙壁）
+    clear_local_costmap:
+      plugin: "nav2_behaviors/ClearCostmapService"
+      costmap_name: local_costmap
+
+    # 5. 清除全局代价地图
+    clear_global_costmap:
+      plugin: "nav2_behaviors/ClearCostmapService"
+      costmap_name: global_costmap
+
+    # 6. 原地等待（等动态障碍物走开）
+    wait:
+      plugin: "nav2_behaviors/Wait"
+
+controller_server:
+  ros__parameters:
+    use_sim_time: True
+    controller_frequency: 20.0
+    min_x_velocity_threshold: 0.001
+    min_y_velocity_threshold: 0.5
+    min_theta_velocity_threshold: 0.001
+    progress_checker_plugin: "progress_checker"
+    goal_checker_plugins: ["general_goal_checker"]
+    controller_plugins: ["FollowPath"]
+    # 使用 DWB 局部规划器
+    FollowPath:
+      plugin: "dwb_core::DWBLocalPlanner"
+
+planner_server:
+  ros__parameters:
+    use_sim_time: True
+    tolerance: 0.5
+    use_astar: true
+    planner_plugins: ["GridBased"]
+    # 使用 NavFn 全局规划器
+    GridBased:
+      plugin: "nav2_navfn_planner/NavfnPlanner"
+
+local_costmap:
+  local_costmap:
+    ros__parameters:
+      use_sim_time: True
+      global_frame: odom
+      robot_base_frame: base_link
+      rolling_window: true
+      width: 3.0
+      height: 3.0
+      resolution: 0.05
+      robot_radius: 0.175 # TB4近似轮廓
+      plugins: ["obstacle_layer", "inflation_layer"]
+      obstacle_layer:
+        plugin: "nav2_costmap_2d::ObstacleLayer"
+        enabled: True
+        observation_sources: scan
+        scan:
+          topic: /scan
+          max_obstacle_height: 2.0
+          clearing: True
+          marking: True
+          data_type: "LaserScan"
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        inflation_radius: 0.3 # 膨胀半径，防撞墙
+
+global_costmap:
+  global_costmap:
+    ros__parameters:
+      use_sim_time: True
+      global_frame: map
+      robot_base_frame: base_link
+      use_maximum: true
+      robot_radius: 0.175
+      resolution: 0.05
+      plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
+      static_layer:
+        plugin: "nav2_costmap_2d::StaticLayer"
+        map_subscribe_transient_local: True
+        map_topic: /map # 关键：必须与 RTAB-Map 输出的地图话题一致
+      obstacle_layer:
+        plugin: "nav2_costmap_2d::ObstacleLayer"
+        enabled: True
+        observation_sources: scan
+        scan:
+          topic: /scan
+          max_obstacle_height: 2.0
+          clearing: True
+          marking: True
+          data_type: "LaserScan"
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        inflation_radius: 0.35
