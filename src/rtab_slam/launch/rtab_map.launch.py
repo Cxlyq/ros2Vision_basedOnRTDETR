@@ -14,6 +14,7 @@ def generate_launch_description():
 
         # 算法调优
         'Grid/FromDepth': 'false',  # 用雷达(/scan)建2D地图，比用深度图更清晰
+        'Grid/Sensor': '1',
         'Reg/Strategy': '1',  # 优先使用雷达(ICP)来纠正里程计
         'RGBD/NeighborLinkRefining': 'true'
     }]
