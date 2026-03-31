@@ -87,14 +87,12 @@ controller_server:
       min_speed_xy: 0.0
       max_speed_xy: 0.3
       min_speed_theta: 0.0
-
       acc_lim_x: 2.5       # X方向最大加速度
       acc_lim_y: 0.0        # Y方向最大加速度
       acc_lim_theta: 3.2    # 旋转最大加速度
       decel_lim_x: -2.5     # X方向最大减速度
       decel_lim_y: 0.0      # Y方向最大减速度
       decel_lim_theta: -3.2 # 旋转最大减速度
-
       vx_samples: 20        # X方向采样20条轨迹
       vy_samples: 1         # Y方向采样1条 (因为不能横走)
       vtheta_samples: 20    # 旋转采样20条轨迹
@@ -181,3 +179,4 @@ global_costmap:
         plugin: "nav2_costmap_2d::InflationLayer"
         inflation_radius: 0.3
         cost_scaling_factor: 3.0 # 平滑梯度系数
+
