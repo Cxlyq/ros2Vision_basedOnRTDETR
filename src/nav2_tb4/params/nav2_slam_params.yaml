@@ -103,6 +103,8 @@ planner_server:
     # 使用 NavFn 全局规划器
     GridBased:
       plugin: "nav2_navfn_planner/NavfnPlanner"
+      allow_unknown: true    # 允许规划器将路径穿过尚未建图的未知区域
+      use_dijkstra: true     # A* 算法有时对未知区域不敏感，退回 Dijkstra 更稳定
 
 local_costmap:
   local_costmap:
@@ -139,6 +141,8 @@ global_costmap:
       use_maximum: true
       robot_radius: 0.175
       resolution: 0.05
+      track_unknown_space: true       # 追踪未知区域
+      always_send_full_costmap: true  # 确保代价地图完整下发
       plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
