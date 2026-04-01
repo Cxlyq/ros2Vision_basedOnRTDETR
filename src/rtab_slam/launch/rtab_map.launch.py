@@ -16,7 +16,15 @@ def generate_launch_description():
         'Grid/FromDepth': 'false',  # 用雷达(/scan)建2D地图，比用深度图更清晰
         'Grid/Sensor': '1',
         'Reg/Strategy': '1',  # 优先使用雷达(ICP)来纠正里程计
-        'RGBD/NeighborLinkRefining': 'true'
+        'RGBD/NeighborLinkRefining': 'true',
+        # 忽略贴近地面的测距点
+        'Grid/MaxGroundHeight': '0.1',  # 【关键】将距离地面 10 厘米以下的所有雷达点视为“地板”，直接剔除！
+        'Grid/MaxObstacleHeight': '2.0',  # 忽略 2 米以上的天花板噪点
+        # 开启基于半径的孤立噪点滤波
+        'Grid/NoiseFilteringRadius': '0.5',  # 过滤半径 0.5 米
+        'Grid/NoiseFilteringMinNeighbors': '5', # 如果一个黑点在 0.1 米半径内，周围没有至少 5 个黑点做伴，就判定它是“幽灵噪点”，直接抹除！
+        # 限制雷达的有效建图距离
+        'Grid/RangeMax': '5.0', # 雷达打得越远，打到地面的概率越高。限制只相信 5 米内的雷达数据。
     }]
 
     # === 2. 话题重映射 ===
