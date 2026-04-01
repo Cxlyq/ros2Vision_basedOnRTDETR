@@ -1,5 +1,5 @@
 rtabmap:
-  ros__parameters: &shared_params
+  ros__parameters:
     frame_id: "base_link"  # 机器人的中心坐标系
     use_sim_time: true # 使用 Gazebo 仿真时钟
     subscribe_depth: true # 订阅深度图
@@ -54,4 +54,56 @@ rtabmap:
     "Grid/MapFrameProjection": "true" # 将雷达点投影到 2D 地图前，更严格地参考全局 Map 坐标系，能有效减少因为局部倾斜导致的假障碍物。
 
 rtabmap_viz:
-  ros__parameters: *shared_params
+  ros__parameters:
+    frame_id: "base_link"  # 机器人的中心坐标系
+    use_sim_time: true # 使用 Gazebo 仿真时钟
+    subscribe_depth: true # 订阅深度图
+    subscribe_scan: true  # 订阅 2D 激光雷达
+    approx_sync: true  # 允许时间戳微小偏差
+    queue_size: 20
+
+    # ================= 算法调优 =================
+    "Grid/FromDepth": "false"  # 用雷达(/scan)建2D地图，比用深度图更清晰
+    "Grid/Sensor": "1"
+    "Reg/Strategy": "1"  # 优先使用雷达(ICP)来纠正里程计
+    "RGBD/NeighborLinkRefining": "true"
+
+    # ======== 强制开启 3D 射线追踪与地面高度过滤 ========
+    "Grid/3D": "true"  # 强迫 RTAB-Map 在 3D 空间中计算雷达射线，而不是拍扁在 2D 里算
+    "Grid/MaxGroundHeight": "0.15"  # 将距离地面 15 厘米以下的所有雷达点视为“地板”，直接剔除
+    "Grid/MaxObstacleHeight": "0.6"  # 忽略 2 米以上的天花板噪点
+
+    # ======== 开启基于半径的孤立噪点滤波 ========
+    "Grid/NoiseFilteringRadius": "0.08"  # 过滤半径 0.08 米
+    "Grid/NoiseFilteringMinNeighbors": "4" # 如果一个黑点在 0.08 米半径内，周围没有至少 4 个黑点做伴，就判定它是“幽灵噪点”，直接抹除！
+
+    # ======== 限制雷达的有效建图距离 ========
+    "Grid/RangeMax": "5.0" # 雷达打得越远，打到地面的概率越高。限制只相信 5 米内的雷达数据。
+    "Grid/RangeMin": "0.4" # 忽略雷达中心 0.4 米以内的数据
+
+    # ======== 运动更新阈值 ========
+    "RGBD/LinearUpdate": "0.1"  # 小车平移超过 0.1 米，才把新的雷达数据融合进地图
+    "RGBD/AngularUpdate": "0.1" # 小车旋转超过 0.1 弧度（约5.7度），才融合数据
+
+    # ======== 开启射线追踪清除 ========
+    "Grid/RayTracing": "true"
+
+    # ======== 强化基于雷达的局部空间回环 ========
+    "RGBD/ProximityBySpace": "true"
+    "RGBD/ProximityPathMax": "10" # 在 10 米的路径长度内寻找空间相似性
+
+    # ======== 强制全局地图重绘 ========
+    "Grid/GlobalFullUpdate": "true"
+
+    # ======== 优化策略 ========
+    "RGBD/OptimizeFromGraphEnd": "false"
+
+    # ================= 2D 栅格地图画质提升 =================
+    # 过滤悬浮的独立噪点（消灭零星的幽灵像素）
+    "GridGlobal/MinSize": "20"  # 如果一坨黑色的障碍物连在一起的像素点少于 20 个，直接在发布前把它抹除
+    # 地图腐蚀（平滑锯齿状的边缘）
+    "GridGlobal/Eroded": "true" # 开启地图腐蚀，会让粗糙变厚的墙壁边缘变薄变锐利，更接近真实的直线。
+    # 提高地图分辨率（让锯齿变小，但会增加 CPU 负担）
+    "Grid/CellSize": "0.025"
+    # 优化从 3D 到 2D 的投影策略
+    "Grid/MapFrameProjection": "true" # 将雷达点投影到 2D 地图前，更严格地参考全局 Map 坐标系，能有效减少因为局部倾斜导致的假障碍物。
