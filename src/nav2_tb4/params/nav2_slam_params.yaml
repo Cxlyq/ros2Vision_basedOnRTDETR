@@ -78,7 +78,7 @@ controller_server:
     FollowPath:
       plugin: "dwb_core::DWBLocalPlanner"
       # ====== 小车运动学参数 ======
-      max_vel_x: 0.3        # 最大前进速度 (m/s)
+      max_vel_x: 0.6        # 最大前进速度 (m/s)
       min_vel_x: 0.0        # 最小前进速度 (不允许倒车，倒车由 behavior 负责)
       max_vel_y: 0.0        # 最大侧向速度 (差速轮不能横行，必须为0)
       min_vel_y: 0.0        # 最小侧向速度
@@ -88,10 +88,10 @@ controller_server:
       max_speed_xy: 0.3
       min_speed_theta: 0.0
 
-      acc_lim_x: 1.0        # X方向最大加速度
+      acc_lim_x: 0.3       # X方向最大加速度
       acc_lim_y: 0.0        # Y方向最大加速度
       acc_lim_theta: 2.0    # 旋转最大加速度
-      decel_lim_x: -1.0     # X方向最大减速度
+      decel_lim_x: -0.3     # X方向最大减速度
       decel_lim_y: 0.0      # Y方向最大减速度
       decel_lim_theta: -2.0 # 旋转最大减速度
 
@@ -148,7 +148,7 @@ local_costmap:
           data_type: "LaserScan"
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
-        inflation_radius: 0.3 # 膨胀半径，防撞墙
+        inflation_radius: 0.1 # 膨胀半径，防撞墙
 
 global_costmap:
   global_costmap:
@@ -179,4 +179,4 @@ global_costmap:
 #          data_type: "LaserScan"
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
-        inflation_radius: 0.35
+        inflation_radius: 0.1
