@@ -101,7 +101,7 @@ controller_server:
       sim_time: 1.5         # 每次向前预测 1.5 秒的轨迹
       # ==================================
       critics: ["RotateToGoal", "Oscillation", "BaseObstacle", "GoalAlign", "PathAlign", "PathDist", "GoalDist"]
-      BaseObstacle.scale: 0.02   # 避障权重
+      BaseObstacle.scale: 62.0   # 避障权重
       PathAlign.scale: 32.0      # 贴合路径权重
       GoalAlign.scale: 24.0      # 对齐目标权重
       PathDist.scale: 32.0       # 距离路径权重
@@ -150,7 +150,7 @@ local_costmap:
           data_type: "LaserScan"
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
-        inflation_radius: 0.1 # 膨胀半径，防撞墙
+        inflation_radius: 0.3 # 膨胀半径，防撞墙
 
 global_costmap:
   global_costmap:
@@ -170,4 +170,4 @@ global_costmap:
         map_topic: /map # 关键：必须与 RTAB-Map 输出的地图话题一致
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
-        inflation_radius: 0.1
+        inflation_radius: 0.3
