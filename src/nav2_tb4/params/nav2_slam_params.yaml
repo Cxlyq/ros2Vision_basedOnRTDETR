@@ -115,11 +115,13 @@ planner_server:
     tolerance: 0.5
     use_astar: true
     planner_plugins: ["GridBased"]
-    # 使用 NavFn 全局规划器
+    # 使用新一代的 SmacPlanner2D
     GridBased:
-      plugin: "nav2_navfn_planner/NavfnPlanner"
+      plugin: "nav2_smac_planner/SmacPlanner2D"
       allow_unknown: true    # 允许规划器将路径穿过尚未建图的未知区域
-      use_dijkstra: true     # A* 算法有时对未知区域不敏感，退回 Dijkstra 更稳定
+      tolerance: 0.5               # Smac 自己也需要这个容忍度参数
+      use_final_approach_orientation: true # 到达终点时平滑转向
+      downsample_costmap: false    # 不降采样，保证精度
 
 local_costmap:
   local_costmap:

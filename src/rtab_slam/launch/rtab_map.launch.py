@@ -17,14 +17,18 @@ def generate_launch_description():
         'Grid/Sensor': '1',
         'Reg/Strategy': '1',  # 优先使用雷达(ICP)来纠正里程计
         'RGBD/NeighborLinkRefining': 'true',
-        # 忽略贴近地面的测距点
-        'Grid/MaxGroundHeight': '0.1',  # 【关键】将距离地面 10 厘米以下的所有雷达点视为“地板”，直接剔除！
+        # 强制开启 3D 射线追踪与地面高度过滤
+        'Grid/3D': "true",  # 强迫 RTAB-Map 在 3D 空间中计算雷达射线，而不是拍扁在 2D 里算
+        'Grid/MaxGroundHeight': '0.1',  # 将距离地面 10 厘米以下的所有雷达点视为“地板”，直接剔除！
         'Grid/MaxObstacleHeight': '2.0',  # 忽略 2 米以上的天花板噪点
         # 开启基于半径的孤立噪点滤波
         'Grid/NoiseFilteringRadius': '0.5',  # 过滤半径 0.5 米
         'Grid/NoiseFilteringMinNeighbors': '5', # 如果一个黑点在 0.1 米半径内，周围没有至少 5 个黑点做伴，就判定它是“幽灵噪点”，直接抹除！
         # 限制雷达的有效建图距离
         'Grid/RangeMax': '5.0', # 雷达打得越远，打到地面的概率越高。限制只相信 5 米内的雷达数据。
+        # 运动更新阈值
+        'RGBD/LinearUpdate': "0.1",  # 小车平移超过 0.1 米，才把新的雷达数据融合进地图
+        'RGBD/AngularUpdate': "0.1",  # 小车旋转超过 0.1 弧度（约5.7度），才融合数据
     }]
 
     # === 2. 话题重映射 ===
