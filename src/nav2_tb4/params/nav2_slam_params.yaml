@@ -99,7 +99,6 @@ controller_server:
       vy_samples: 1         # Y方向采样1条 (因为不能横走)
       vtheta_samples: 20    # 旋转采样20条轨迹
       sim_time: 1.5         # 每次向前预测 1.5 秒的轨迹
-      # ==================================
       critics: ["RotateToGoal", "Oscillation", "BaseObstacle", "GoalAlign", "PathAlign", "PathDist", "GoalDist"]
       BaseObstacle.scale: 62.0   # 避障权重
       PathAlign.scale: 32.0      # 贴合路径权重
@@ -168,7 +167,7 @@ global_costmap:
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
         map_subscribe_transient_local: True
-        map_topic: /map # 关键：必须与 RTAB-Map 输出的地图话题一致
+        map_topic: /map # 必须与 RTAB-Map 输出的地图话题一致
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         inflation_radius: 0.3

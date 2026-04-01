@@ -23,6 +23,7 @@ def generate_launch_description():
         Node(
             package='nav2_controller',
             executable='controller_server',
+            name='controller_server',
             output='screen',
             parameters=[nav2_params_path],
             remappings=remappings),
