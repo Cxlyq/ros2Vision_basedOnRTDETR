@@ -31,6 +31,8 @@ def generate_launch_description():
         'RGBD/AngularUpdate': "0.1",  # 小车旋转超过 0.1 弧度（约5.7度），才融合数据
         # 开启射线追踪清除
         'Grid/RayTracing': 'true',
+        # 忽略雷达中心 0.25 米以内的所有数据，确保雷达不会扫到自己。
+        'Grid/RangeMin': '0.25',
     }]
 
     # === 2. 话题重映射 ===
