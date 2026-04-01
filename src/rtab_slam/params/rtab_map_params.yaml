@@ -16,7 +16,7 @@ rtabmap:
     # ======== 强制开启 3D 射线追踪与地面高度过滤 ========
     "Grid/3D": "true"  # 强迫 RTAB-Map 在 3D 空间中计算雷达射线，而不是拍扁在 2D 里算
     "Grid/MaxGroundHeight": "0.15"  # 将距离地面 15 厘米以下的所有雷达点视为“地板”，直接剔除
-    "Grid/MaxObstacleHeight": "2.0"  # 忽略 2 米以上的天花板噪点
+    "Grid/MaxObstacleHeight": "0.6"  # 忽略 2 米以上的天花板噪点
 
     # ======== 开启基于半径的孤立噪点滤波 ========
     "Grid/NoiseFilteringRadius": "0.08"  # 过滤半径 0.08 米
@@ -24,7 +24,7 @@ rtabmap:
 
     # ======== 限制雷达的有效建图距离 ========
     "Grid/RangeMax": "5.0" # 雷达打得越远，打到地面的概率越高。限制只相信 5 米内的雷达数据。
-    "Grid/RangeMin": "0.25" # 忽略雷达中心 0.25 米以内的数据
+    "Grid/RangeMin": "0.4" # 忽略雷达中心 0.4 米以内的数据
 
     # ======== 运动更新阈值 ========
     "RGBD/LinearUpdate": "0.1"  # 小车平移超过 0.1 米，才把新的雷达数据融合进地图
@@ -42,6 +42,16 @@ rtabmap:
 
     # ======== 优化策略 ========
     "RGBD/OptimizeFromGraphEnd": "false"
+
+    # ================= 2D 栅格地图画质提升 =================
+    # 过滤悬浮的独立噪点（消灭零星的幽灵像素）
+    "GridGlobal/MinSize": "20"  # 如果一坨黑色的障碍物连在一起的像素点少于 20 个，直接在发布前把它抹除
+    # 地图腐蚀（平滑锯齿状的边缘）
+    "GridGlobal/Eroded": "true" # 开启地图腐蚀，会让粗糙变厚的墙壁边缘变薄变锐利，更接近真实的直线。
+    # 提高地图分辨率（让锯齿变小，但会增加 CPU 负担）
+    "Grid/CellSize": "0.025"
+    # 优化从 3D 到 2D 的投影策略
+    "Grid/MapFrameProjection": "true" # 将雷达点投影到 2D 地图前，更严格地参考全局 Map 坐标系，能有效减少因为局部倾斜导致的假障碍物。
 
 rtabmap_viz:
   ros__parameters: *shared_params
