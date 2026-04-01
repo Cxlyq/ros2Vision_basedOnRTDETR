@@ -33,6 +33,13 @@ def generate_launch_description():
         'Grid/RayTracing': 'true',
         # 忽略雷达中心 0.25 米以内的所有数据，确保雷达不会扫到自己。
         'Grid/RangeMin': '0.25',
+        # 强化基于雷达的局部空间回环
+        'RGBD/ProximityBySpace': 'true',
+        'RGBD/ProximityPathMax': '10',  # 在 10 米的路径长度内寻找空间相似性
+        # 强制全局地图重绘，在发生回环后更新重绘输出的 2D 栅格地图。
+        'Grid/GlobalFullUpdate': 'true',
+        # 优化策略
+        'RGBD/OptimizeFromGraphEnd': 'false',
     }]
 
     # === 2. 话题重映射 ===
