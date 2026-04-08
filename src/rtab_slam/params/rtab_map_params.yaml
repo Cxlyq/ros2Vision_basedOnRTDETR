@@ -11,6 +11,7 @@ rtabmap:
     "Grid/FromDepth": "false"  # 用雷达(/scan)建2D地图，比用深度图更清晰
     "Grid/Sensor": "1"
     "Reg/Strategy": "1"  # 优先使用雷达(ICP)来纠正里程计
+    "Reg/Force3DoF": "true" # 根据https://github.com/introlab/rtabmap_ros/issues/865
     "RGBD/NeighborLinkRefining": "true"
 
     # ======== 强制开启 3D 射线追踪与地面高度过滤 ========
