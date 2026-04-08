@@ -115,3 +115,5 @@ https://arxiv.org/abs/2403.06341
 https://introlab.github.io/rtabmap/
 
 https://github.com/introlab/rtabmap
+
+https://github.com/introlab/rtabmap_ros/issues/865
