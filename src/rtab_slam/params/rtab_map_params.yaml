@@ -1,6 +1,6 @@
 rtabmap:
   ros__parameters:
-    frame_id: "base_link"  # 机器人的中心坐标系
+    frame_id: "base_footprint"  # 机器人的中心坐标系
     use_sim_time: true # 使用 Gazebo 仿真时钟
     subscribe_depth: true # 订阅深度图
     subscribe_scan: true  # 订阅 2D 激光雷达
