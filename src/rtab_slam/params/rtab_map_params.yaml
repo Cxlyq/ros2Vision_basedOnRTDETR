@@ -18,6 +18,7 @@ rtabmap:
     "Grid/3D": "true"  # 强迫 RTAB-Map 在 3D 空间中计算雷达射线，而不是拍扁在 2D 里算
     "Grid/MaxGroundHeight": "0.15"  # 将距离地面 15 厘米以下的所有雷达点视为“地板”，直接剔除
     "Grid/MaxObstacleHeight": "0.6"  # 忽略 2 米以上的天花板噪点
+    "Grid/MinObstacleHeight": "0.15"   # 直接忽略 0.15 米以下的所有雷达点
 
     # ======== 开启基于半径的孤立噪点滤波 ========
     "Grid/NoiseFilteringRadius": "0.08"  # 过滤半径 0.08 米
