@@ -14,7 +14,7 @@ def generate_launch_description():
         ('rgb/image', '/oakd/rgb/preview/image_raw'),
         ('depth/image', '/oakd/rgb/preview/depth'),
         ('rgb/camera_info', '/oakd/rgb/preview/camera_info'),
-        ('scan', '/scan'),
+        ('scan', '/scan_filtered'),
         ('odom', '/odom')
     ]
 
