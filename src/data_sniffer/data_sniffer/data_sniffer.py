@@ -6,6 +6,7 @@ import os
 import queue
 import threading
 import math
+import time
 from datetime import datetime
 
 
@@ -17,16 +18,20 @@ class DataExporterNode(Node):
     def __init__(self):
         super().__init__('data_sniffer_node')
 
-        # 1. 参数声明：改为接收输出目录
+        # 1. 参数声明
         self.declare_parameter('topic_name', '/scan')
         self.declare_parameter('msg_type', 'LaserScan')
         self.declare_parameter('output_dir', './exported_data')  # 默认当前目录下的 exported_data 文件夹
-
+        self.declare_parameter('target_fps', 10.0)
         topic_name = self.get_parameter('topic_name').get_parameter_value().string_value
         self.msg_type = self.get_parameter('msg_type').get_parameter_value().string_value
         output_dir = self.get_parameter('output_dir').get_parameter_value().string_value
 
         self.get_logger().info(f'Init data sniffer: Aim topic [{topic_name}]')
+
+        self.target_fps = self.get_parameter('target_fps').value
+        self.min_interval = 1.0 / self.target_fps
+        self.last_processed_time = 0.0  # 记录上一次处理的时间戳
 
         # 2. 目录创建与基础文件名前缀
         os.makedirs(output_dir, exist_ok=True)
@@ -159,23 +164,27 @@ class DataExporterNode(Node):
             self.get_logger().warn('Too slow to save data, current frame was rejected! ', throttle_duration_sec=2.0)
 
     def laserscan_callback(self, msg):
-        self.frame_count += 1 # 保证同一帧的多个文件拥有相同的序号
-        # 提取生成 PLY 所需的完整上下文数据
-        scan_data = {
-            'angle_min': msg.angle_min,
-            'angle_increment': msg.angle_increment,
-            'range_min': msg.range_min,
-            'range_max': msg.range_max,
-            'ranges': msg.ranges,
-            'intensities': msg.intensities
-        }
-        # 任务 1：保存为 CSV
-        csv_path = self.get_filepath('.csv')
-        self._enqueue_task(csv_path, msg.ranges, write_format='csv_row')
+        current_time = time.time()
+        # 降频逻辑：判断距离上次处理是否已经过了足够的时间
+        if (current_time - self.last_processed_time) >= self.min_interval:
+            self.last_processed_time = current_time
+            self.frame_count += 1 # 保证同一帧的多个文件拥有相同的序号
+            # 提取生成 PLY 所需的完整上下文数据
+            scan_data = {
+                'angle_min': msg.angle_min,
+                'angle_increment': msg.angle_increment,
+                'range_min': msg.range_min,
+                'range_max': msg.range_max,
+                'ranges': msg.ranges,
+                'intensities': msg.intensities
+            }
+            # 任务 1：保存为 CSV
+            csv_path = self.get_filepath('.csv')
+            self._enqueue_task(csv_path, msg.ranges, write_format='csv_row')
 
-        # 任务 2：保存为 PLY
-        ply_path = self.get_filepath('.ply')
-        self._enqueue_task(ply_path, scan_data, write_format='ply_pointcloud')
+            # 任务 2：保存为 PLY
+            ply_path = self.get_filepath('.ply')
+            self._enqueue_task(ply_path, scan_data, write_format='ply_pointcloud')
 
     def odometry_callback(self, msg): # TODO
         self.frame_count += 1
@@ -188,14 +197,18 @@ class DataExporterNode(Node):
 
     # ================= 节点销毁时的清理工作 =================
     def destroy_node(self):
-        self.get_logger().info('Record stopped...')
+        try:
+            self.get_logger().info('Record stopped...')
+        except:
+            print('Stopping and cleaning resources. (ROS Context invalid)...')
+
         self.is_running = False  # 通知后台线程准备退出
 
         # 阻塞等待后台线程把队列里的剩余数据全部写完
         if self.write_thread.is_alive():
             self.write_thread.join(timeout=3.0)
 
-        self.get_logger().info(f'Recording ended, received {self.frame_count} frames，saved {self.saved_count} frames。')
+        print(f'Recording ended, received {self.frame_count} frames，saved {self.saved_count} frames。')
         super().destroy_node()
 
 
