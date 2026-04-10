@@ -26,7 +26,7 @@ class DataExporterNode(Node):
         self.msg_type = self.get_parameter('msg_type').get_parameter_value().string_value
         output_dir = self.get_parameter('output_dir').get_parameter_value().string_value
 
-        self.get_logger().info(f'初始化数据导出器: 目标话题 [{topic_name}]')
+        self.get_logger().info(f'Init data sniffer: Aim topic [{topic_name}]')
 
         # 2. 目录创建与基础文件名前缀
         os.makedirs(output_dir, exist_ok=True)
@@ -60,9 +60,9 @@ class DataExporterNode(Node):
                 topic_name,
                 config['callback'],
                 10)  # 这里的 10 是 ROS 2 底层的 QoS 队列深度
-            self.get_logger().info(f'订阅成功！数据将异步保存至: {os.path.abspath(self.output_dir)}')
+            self.get_logger().info(f'Subscribe Successfully！Data will be saved at: {os.path.abspath(self.output_dir)}')
         else:
-            self.get_logger().error(f'不支持的消息类型: {self.msg_type}。')
+            self.get_logger().error(f'Unsupported message type: {self.msg_type}。')
             exit(1)
 
     def get_filepath(self, extension):
@@ -131,7 +131,7 @@ class DataExporterNode(Node):
                                 f.write(f"{p[0]:.4f} {p[1]:.4f} {p[2]:.4f}\n")
 
                 else:
-                    self.get_logger().error(f"未知的写入格式: {fmt}")
+                    self.get_logger().error(f"Unknown type: {fmt}")
 
                 self.saved_count += 1
                 self.data_queue.task_done()
@@ -139,7 +139,7 @@ class DataExporterNode(Node):
             except queue.Empty:
                 continue
             except Exception as e:
-                self.get_logger().error(f"文件写入时发生异常: {e}")
+                self.get_logger().error(f"[ERR] An error occurred while writing file : {e}")
 
     # ================= 生产者回调 (快速提取并入队) =================
     def _enqueue_task(self, filepath, data, write_format):
@@ -154,9 +154,9 @@ class DataExporterNode(Node):
 
             # 进度打印逻辑可以保留在这里，或者移到 callback 中
             if self.frame_count % 50 == 0:
-                self.get_logger().info(f'已接收 {self.frame_count} 帧，队列积压: {self.data_queue.qsize()}')
+                self.get_logger().info(f'Received {self.frame_count} frames，Queue remained: {self.data_queue.qsize()}')
         except queue.Full:
-            self.get_logger().warn('硬盘写入速度严重滞后！数据队列已满，丢弃当前帧！', throttle_duration_sec=2.0)
+            self.get_logger().warn('Too slow to save data, current frame was rejected! ', throttle_duration_sec=2.0)
 
     def laserscan_callback(self, msg):
         self.frame_count += 1 # 保证同一帧的多个文件拥有相同的序号
@@ -188,14 +188,14 @@ class DataExporterNode(Node):
 
     # ================= 节点销毁时的清理工作 =================
     def destroy_node(self):
-        self.get_logger().info('正在停止数据记录，等待队列中剩余数据落盘...')
+        self.get_logger().info('Record stopped...')
         self.is_running = False  # 通知后台线程准备退出
 
         # 阻塞等待后台线程把队列里的剩余数据全部写完
         if self.write_thread.is_alive():
             self.write_thread.join(timeout=3.0)
 
-        self.get_logger().info(f'录制结束。共接收 {self.frame_count} 帧，成功保存 {self.saved_count} 帧。')
+        self.get_logger().info(f'Recording ended, received {self.frame_count} frames，saved {self.saved_count} frames。')
         super().destroy_node()
 
 
