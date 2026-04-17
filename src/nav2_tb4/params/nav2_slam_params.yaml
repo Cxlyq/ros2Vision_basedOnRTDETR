@@ -100,7 +100,7 @@ controller_server:
       vtheta_samples: 20    # 旋转采样20条轨迹
       sim_time: 1.7         # 每次向前预测 1.5 秒的轨迹
       critics: ["RotateToGoal", "Oscillation", "BaseObstacle", "GoalAlign", "PathAlign", "PathDist", "GoalDist"]
-      BaseObstacle.scale: 2.0   # 避障权重
+      BaseObstacle.scale: 20.0   # 避障权重
       PathAlign.scale: 32.0      # 贴合路径权重
       GoalAlign.scale: 24.0      # 对齐目标权重
       PathDist.scale: 32.0       # 距离路径权重
