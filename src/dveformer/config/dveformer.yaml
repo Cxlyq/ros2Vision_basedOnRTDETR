@@ -1,0 +1,50 @@
+dveformer_node:
+  ros__parameters:
+    # ==========================================
+    # 1. 核心模型权重与设备 (Core Model & Device)
+    # ==========================================
+    dveformer_weights_path: "trained_models/mixed/dveformer_fullres_mixed.pth"
+    alpha_clip_ckpt_path: "/nas/chenxu103/.cache/nicr_scene_analysis_datasets/auxiliary_data/alpha_clip/l14-336-grit-20m.pth"
+    alpha_clip_model_name: "ViT-L/14@336px" # 隐藏在加载函数中的参数
+    device: "cuda:0"
+
+    # ==========================================
+    # 2. 推理尺寸与数据集特征 (Inference & Dataset Stats)
+    # ==========================================
+    inference_input_width: 640
+    inference_input_height: 480
+    dataset_name: "nyuv2"
+    # MockDepthStats 中的隐藏统计数据
+    depth_mean: 2.8424
+    depth_std: 0.9722
+
+    # ==========================================
+    # 3. 深度图物理预处理 (Depth Processing)
+    # ==========================================
+    depth_scale: 1.0  # 深度单位转换系数 (如16位png转米可能需要0.001)
+    depth_max: 10.0   # 超过此深度的像素置零 (米)
+
+    # ==========================================
+    # 4. 开放词汇与文本匹配参数 (Open-Vocabulary Params)
+    # ==========================================
+    prompt_template: "a photo of a {}"    # 隐藏在 get_normalized_text_embeddings 中的模板
+    similarity_threshold: 0.25            # 隐藏在 main 中的二值化阈值 (sofa_heatmap > 0.25)
+
+    # ==========================================
+    # 5. ROS 2 话题接口 (ROS 2 Interfaces)
+    # ==========================================
+    sub_rgb_topic: "/camera/color/image_raw"
+    sub_depth_topic: "/camera/depth/image_raw"
+    sub_aim_topic: "/user_inst/aim_obj"
+    sub_camera_info_topic: "/camera/depth/camera_info"
+
+    # 向后传递目标词的 768 维特征
+    pub_aim_encode_topic: "/dveformer/aim_encode"
+    # 向后传递体素特征
+    pub_voxel_topic: "/dveformer/semantic_voxels"
+
+    # ==========================================
+    # 6. 建图与相机参数 (Mapping & Camera Intrinsics)
+    # ==========================================
+    voxel_size: 0.1             # 体素边长 0.1 米 (10cm)
+    map_frame_id: "map"         # 全局坐标系名称，由rtabmap 提供的 'map'
