@@ -17,6 +17,9 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/DetectionArray.msg"
   "msg/ObstacleInfo.msg"
   "msg/ObstacleArray.msg"
+  "msg/TargetEmbedding.msg"
+  "msg/SemanticVoxel.msg"
+  "msg/SemanticVoxelArray.msg"
   DEPENDENCIES std_msgs geometry_msgs
 )
 
