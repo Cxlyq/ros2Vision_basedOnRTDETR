@@ -1,0 +1,14 @@
+alpha_clip
+demo
+eval
+examples
+img
+notebooks
+pip-build-tracker-xwcsxcnp
+pip-ephem-wheel-cache-kifglbt3
+pip-install-17fgomte
+pip-modern-metadata-209dzcow
+pip-unpack-gi_7c578
+pip-wheel-vuucjwps
+tmp6yak_ekk
+train

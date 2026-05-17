@@ -1,0 +1,6 @@
+h5py
+numba
+pandas
+panopticapi
+protobuf
+termcolor

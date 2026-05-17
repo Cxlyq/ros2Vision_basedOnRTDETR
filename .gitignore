@@ -30,6 +30,7 @@ __pycache__/
 *.pt
 *.onnx
 *.engine
+*.tar.gz
 # 数据集忽略
 coco/
 output/

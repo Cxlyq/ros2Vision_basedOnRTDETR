@@ -1,0 +1,736 @@
+Metadata-Version: 2.4
+Name: nicr-scene-analysis-datasets
+Version: 0.8.3
+Summary: Package to prepare and use common datasets for scene analysis.
+Author-email: Daniel Seichter <daniel.seichter@tu-ilmenau.de>, Soehnke Fischedick <soehnke.fischedick@tu-ilmenau.de>
+License:                                  Apache License
+                                   Version 2.0, January 2004
+                                http://www.apache.org/licenses/
+        
+           TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+        
+           1. Definitions.
+        
+              "License" shall mean the terms and conditions for use, reproduction,
+              and distribution as defined by Sections 1 through 9 of this document.
+        
+              "Licensor" shall mean the copyright owner or entity authorized by
+              the copyright owner that is granting the License.
+        
+              "Legal Entity" shall mean the union of the acting entity and all
+              other entities that control, are controlled by, or are under common
+              control with that entity. For the purposes of this definition,
+              "control" means (i) the power, direct or indirect, to cause the
+              direction or management of such entity, whether by contract or
+              otherwise, or (ii) ownership of fifty percent (50%) or more of the
+              outstanding shares, or (iii) beneficial ownership of such entity.
+        
+              "You" (or "Your") shall mean an individual or Legal Entity
+              exercising permissions granted by this License.
+        
+              "Source" form shall mean the preferred form for making modifications,
+              including but not limited to software source code, documentation
+              source, and configuration files.
+        
+              "Object" form shall mean any form resulting from mechanical
+              transformation or translation of a Source form, including but
+              not limited to compiled object code, generated documentation,
+              and conversions to other media types.
+        
+              "Work" shall mean the work of authorship, whether in Source or
+              Object form, made available under the License, as indicated by a
+              copyright notice that is included in or attached to the work
+              (an example is provided in the Appendix below).
+        
+              "Derivative Works" shall mean any work, whether in Source or Object
+              form, that is based on (or derived from) the Work and for which the
+              editorial revisions, annotations, elaborations, or other modifications
+              represent, as a whole, an original work of authorship. For the purposes
+              of this License, Derivative Works shall not include works that remain
+              separable from, or merely link (or bind by name) to the interfaces of,
+              the Work and Derivative Works thereof.
+        
+              "Contribution" shall mean any work of authorship, including
+              the original version of the Work and any modifications or additions
+              to that Work or Derivative Works thereof, that is intentionally
+              submitted to Licensor for inclusion in the Work by the copyright owner
+              or by an individual or Legal Entity authorized to submit on behalf of
+              the copyright owner. For the purposes of this definition, "submitted"
+              means any form of electronic, verbal, or written communication sent
+              to the Licensor or its representatives, including but not limited to
+              communication on electronic mailing lists, source code control systems,
+              and issue tracking systems that are managed by, or on behalf of, the
+              Licensor for the purpose of discussing and improving the Work, but
+              excluding communication that is conspicuously marked or otherwise
+              designated in writing by the copyright owner as "Not a Contribution."
+        
+              "Contributor" shall mean Licensor and any individual or Legal Entity
+              on behalf of whom a Contribution has been received by Licensor and
+              subsequently incorporated within the Work.
+        
+           2. Grant of Copyright License. Subject to the terms and conditions of
+              this License, each Contributor hereby grants to You a perpetual,
+              worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+              copyright license to reproduce, prepare Derivative Works of,
+              publicly display, publicly perform, sublicense, and distribute the
+              Work and such Derivative Works in Source or Object form.
+        
+           3. Grant of Patent License. Subject to the terms and conditions of
+              this License, each Contributor hereby grants to You a perpetual,
+              worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+              (except as stated in this section) patent license to make, have made,
+              use, offer to sell, sell, import, and otherwise transfer the Work,
+              where such license applies only to those patent claims licensable
+              by such Contributor that are necessarily infringed by their
+              Contribution(s) alone or by combination of their Contribution(s)
+              with the Work to which such Contribution(s) was submitted. If You
+              institute patent litigation against any entity (including a
+              cross-claim or counterclaim in a lawsuit) alleging that the Work
+              or a Contribution incorporated within the Work constitutes direct
+              or contributory patent infringement, then any patent licenses
+              granted to You under this License for that Work shall terminate
+              as of the date such litigation is filed.
+        
+           4. Redistribution. You may reproduce and distribute copies of the
+              Work or Derivative Works thereof in any medium, with or without
+              modifications, and in Source or Object form, provided that You
+              meet the following conditions:
+        
+              (a) You must give any other recipients of the Work or
+                  Derivative Works a copy of this License; and
+        
+              (b) You must cause any modified files to carry prominent notices
+                  stating that You changed the files; and
+        
+              (c) You must retain, in the Source form of any Derivative Works
+                  that You distribute, all copyright, patent, trademark, and
+                  attribution notices from the Source form of the Work,
+                  excluding those notices that do not pertain to any part of
+                  the Derivative Works; and
+        
+              (d) If the Work includes a "NOTICE" text file as part of its
+                  distribution, then any Derivative Works that You distribute must
+                  include a readable copy of the attribution notices contained
+                  within such NOTICE file, excluding those notices that do not
+                  pertain to any part of the Derivative Works, in at least one
+                  of the following places: within a NOTICE text file distributed
+                  as part of the Derivative Works; within the Source form or
+                  documentation, if provided along with the Derivative Works; or,
+                  within a display generated by the Derivative Works, if and
+                  wherever such third-party notices normally appear. The contents
+                  of the NOTICE file are for informational purposes only and
+                  do not modify the License. You may add Your own attribution
+                  notices within Derivative Works that You distribute, alongside
+                  or as an addendum to the NOTICE text from the Work, provided
+                  that such additional attribution notices cannot be construed
+                  as modifying the License.
+        
+              You may add Your own copyright statement to Your modifications and
+              may provide additional or different license terms and conditions
+              for use, reproduction, or distribution of Your modifications, or
+              for any such Derivative Works as a whole, provided Your use,
+              reproduction, and distribution of the Work otherwise complies with
+              the conditions stated in this License.
+        
+           5. Submission of Contributions. Unless You explicitly state otherwise,
+              any Contribution intentionally submitted for inclusion in the Work
+              by You to the Licensor shall be under the terms and conditions of
+              this License, without any additional terms or conditions.
+              Notwithstanding the above, nothing herein shall supersede or modify
+              the terms of any separate license agreement you may have executed
+              with Licensor regarding such Contributions.
+        
+           6. Trademarks. This License does not grant permission to use the trade
+              names, trademarks, service marks, or product names of the Licensor,
+              except as required for reasonable and customary use in describing the
+              origin of the Work and reproducing the content of the NOTICE file.
+        
+           7. Disclaimer of Warranty. Unless required by applicable law or
+              agreed to in writing, Licensor provides the Work (and each
+              Contributor provides its Contributions) on an "AS IS" BASIS,
+              WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+              implied, including, without limitation, any warranties or conditions
+              of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A
+              PARTICULAR PURPOSE. You are solely responsible for determining the
+              appropriateness of using or redistributing the Work and assume any
+              risks associated with Your exercise of permissions under this License.
+        
+           8. Limitation of Liability. In no event and under no legal theory,
+              whether in tort (including negligence), contract, or otherwise,
+              unless required by applicable law (such as deliberate and grossly
+              negligent acts) or agreed to in writing, shall any Contributor be
+              liable to You for damages, including any direct, indirect, special,
+              incidental, or consequential damages of any character arising as a
+              result of this License or out of the use or inability to use the
+              Work (including but not limited to damages for loss of goodwill,
+              work stoppage, computer failure or malfunction, or any and all
+              other commercial damages or losses), even if such Contributor
+              has been advised of the possibility of such damages.
+        
+           9. Accepting Warranty or Additional Liability. While redistributing
+              the Work or Derivative Works thereof, You may choose to offer,
+              and charge a fee for, acceptance of support, warranty, indemnity,
+              or other liability obligations and/or rights consistent with this
+              License. However, in accepting such obligations, You may act only
+              on Your own behalf and on Your sole responsibility, not on behalf
+              of any other Contributor, and only if You agree to indemnify,
+              defend, and hold each Contributor harmless for any liability
+              incurred by, or claims asserted against, such Contributor by reason
+              of your accepting any such warranty or additional liability.
+        
+           END OF TERMS AND CONDITIONS
+        
+           APPENDIX: How to apply the Apache License to your work.
+        
+              To apply the Apache License to your work, attach the following
+              boilerplate notice, with the fields enclosed by brackets "[]"
+              replaced with your own identifying information. (Don't include
+              the brackets!)  The text should be enclosed in the appropriate
+              comment syntax for the file format. We also recommend that a
+              file or class name and description of purpose be included on the
+              same "printed page" as the copyright notice for easier
+              identification within third-party archives.
+        
+           Copyright 2025 Neuroinformatics and Cognitive Robotics Lab
+           (Technische Universität Ilmenau)
+        
+           Licensed under the Apache License, Version 2.0 (the "License");
+           you may not use this file except in compliance with the License.
+           You may obtain a copy of the License at
+        
+               http://www.apache.org/licenses/LICENSE-2.0
+        
+           Unless required by applicable law or agreed to in writing, software
+           distributed under the License is distributed on an "AS IS" BASIS,
+           WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+           See the License for the specific language governing permissions and
+           limitations under the License.
+        
+Project-URL: Homepage, https://www.tu-ilmenau.de/neurob
+Project-URL: Repository, https://github.com/TUI-NICR/nicr-scene-analysis-datasets
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: cityscapesScripts==1.5.0
+Requires-Dist: numpy
+Requires-Dist: pillow
+Requires-Dist: scipy
+Requires-Dist: tqdm>=4.42.0
+Provides-Extra: withpreparation
+Requires-Dist: h5py; extra == "withpreparation"
+Requires-Dist: numba; extra == "withpreparation"
+Requires-Dist: pandas; extra == "withpreparation"
+Requires-Dist: panopticapi; extra == "withpreparation"
+Requires-Dist: protobuf; extra == "withpreparation"
+Requires-Dist: termcolor; extra == "withpreparation"
+Provides-Extra: withopencv
+Requires-Dist: opencv-python; extra == "withopencv"
+Provides-Extra: withtorch
+Requires-Dist: torch>=2.3.1; extra == "withtorch"
+Provides-Extra: with3d
+Requires-Dist: open3d; extra == "with3d"
+Requires-Dist: plyfile; extra == "with3d"
+Provides-Extra: withauxiliarydata
+Requires-Dist: torch>=2.3.1; extra == "withauxiliarydata"
+Requires-Dist: transformers>=4.45.0; extra == "withauxiliarydata"
+Requires-Dist: loralib; extra == "withauxiliarydata"
+Requires-Dist: alpha-clip; extra == "withauxiliarydata"
+Requires-Dist: gdown; extra == "withauxiliarydata"
+Provides-Extra: withdepthestimation
+Requires-Dist: torch>=2.3.1; extra == "withdepthestimation"
+Requires-Dist: transformers>=4.45.0; extra == "withdepthestimation"
+Provides-Extra: withembeddingestimation
+Requires-Dist: torch>=2.3.1; extra == "withembeddingestimation"
+Requires-Dist: loralib; extra == "withembeddingestimation"
+Requires-Dist: alpha-clip; extra == "withembeddingestimation"
+Requires-Dist: gdown; extra == "withembeddingestimation"
+Provides-Extra: test
+Requires-Dist: torch>=2.3.1; extra == "test"
+Requires-Dist: transformers>=4.45.0; extra == "test"
+Requires-Dist: loralib; extra == "test"
+Requires-Dist: alpha-clip; extra == "test"
+Requires-Dist: gdown; extra == "test"
+Requires-Dist: panopticapi; extra == "test"
+Requires-Dist: pytest>=3.0.2; extra == "test"
+Dynamic: license-file
+
+# NICR Scene Analysis Datasets
+
+This repository contains code to prepare and use common datasets for scene analysis tasks.
+
+> Note that this package is used in ongoing research projects and will be extended and maintained as needed.
+
+Currently, this packages features the following datasets and annotations:
+
+| Dataset                                                               | Updated/Tested |   Type    | Semantic | Instance |  Orientations  |  Scene   |       Normal       | 3D Boxes | Extrinsics | Intrinsics |
+|:----------------------------------------------------------------------|:--------------:|:---------:|:--------:|:--------:|:--------------:|:--------:|:------------------:|:--------:|:----------:|:----------:|
+| [ADE20k](https://ade20k.csail.mit.edu/)                                 | v081/v081      | RGB       | &#10003; | &#10003; |                | &#10003; |                    |          |            |            |
+| [COCO](https://cocodataset.org/#home)                                 | v081/v081      | RGB       | &#10003; | &#10003; |                |          |                    |          |            |            |
+| [Cityscapes](https://www.cityscapes-dataset.com/)                     | v050/v070      | RGB-D\*   | &#10003; | &#10003; |                |          |                    |          |            |            |
+| [Hypersim](https://machinelearning.apple.com/research/hypersim)       | v081/v081      | RGB-D     | &#10003; | &#10003; | (&#10003;)\*\* | &#10003; | &#10003;           | &#10003; | &#10003;   | &#10003;   |
+| [NYUv2](https://cs.nyu.edu/~silberman/datasets/nyu_depth_v2.html)     | v081/v081      | RGB-D     | &#10003; | &#10003; | &#10003;\*\*\* | &#10003; | (&#10003;)\*\*\*\* |          |            |            |
+| [ScanNet](http://www.scan-net.org/)                                   | v081/v081      | RGB-D     | &#10003; | &#10003; |                | &#10003; |                    |          | &#10003;   | &#10003;   |
+| [SceneNet RGB-D](https://robotvault.bitbucket.io/scenenet-rgbd.html)  | v054/v070      | RGB-D     | &#10003; | &#10003; |                | &#10003; |                    |          |            |            |
+| [SUNRGB-D](https://rgbd.cs.princeton.edu/)                            | v081/v081      | RGB-D     | &#10003; | &#10003; |   &#10003;     | &#10003; |                    | &#10003; | &#10003;   | &#10003;   |
+
+\* Both depth and disparity are available.  
+\*\* Orientations are available but not consistent for instances within a semantic class (see [Hypersim](nicr_scene_analysis_datasets/datasets/hypersim)).  
+\*\*\* Annotated by hand in 3D for instances of some relevant semantic classes.  
+\*\*\*\* As of Nov 2022, [precomputed normals](https://cs.nyu.edu/~deigen/dnl/normals_gt.tgz) are not publicly available any longer. We are trying to reach the authors.  
+
+> Note that for every dataset, starting with version 0.8.1 auxiliary data such as synthetic depth images, rgb image embeddings, and panoptic embeddings (by combining semantic and instance annotations) can be generated.
+Therefore, each dataset must be prepared individually before.
+Afterwards, the auxiliary data can be generated by using the `nicr_sa_generate_auxiliary_data` command line entry point.
+
+## License and Citations
+
+The source code is published under Apache 2.0 license, see [license file](LICENSE) for details.
+
+If you use the source code, please cite the paper related to your work:
+
+---
+**Efficient Prediction of Dense Visual Embeddings via Distillation and RGB-D Transformers** (Accepted at IROS 2025):
+> Fischedick, S., Seichter, D., Stephan, B., Schmidt, R., Gross, H.-M.
+*Efficient Prediction of Dense Visual Embeddings via Distillation and RGB-D Transformers*,
+accepted at IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS), 2025.
+
+<details>
+<summary>BibTeX</summary>
+
+```bibtex
+@inproceedings{dveformer2025iros,
+  title     = {{Efficient Prediction of Dense Visual Embeddings via Distillation and RGB-D Transformers}},
+  author    = {Fischedick, S{\"o}hnke and Seichter, Daniel and Stephan, Benedict and Schmidt, Robin and Gross, Horst-Michael},
+  booktitle = {Accepted at IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)},
+  year      = {2025}
+}
+```
+</details>
+
+---
+
+**PanopticNDT: Efficient and Robust Panoptic Mapping** ([IEEE Xplore](https://ieeexplore.ieee.org/document/10342137), [arXiv](https://arxiv.org/abs/2309.13635) (with appendix and some minor fixes)):
+> Seichter, D., Stephan, B., Fischedick, S. B., Müller, S., Rabes, L., Gross, H.-M.
+*PanopticNDT: Efficient and Robust Panoptic Mapping*,
+in IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS), 2023.
+
+<details>
+<summary>BibTeX</summary>
+
+```bibtex
+@inproceedings{panopticndt2023iros,
+  title     = {{PanopticNDT: Efficient and Robust Panoptic Mapping}},
+  author    = {Seichter, Daniel and Stephan, Benedict and Fischedick, S{\"o}hnke Benedikt and  Mueller, Steffen and Rabes, Leonard and Gross, Horst-Michael},
+  booktitle = {IEEE/RSJ Int. Conf. on Intelligent Robots and Systems (IROS)},
+  year      = {2023}
+}
+```
+
+</details>
+
+---
+
+**Efficient Multi-Task Scene Analysis with RGB-D Transformers** ([IEEE Xplore](https://ieeexplore.ieee.org/document/10191977), [arXiv](https://arxiv.org/abs/2306.05242)):
+> Fischedick, S., Seichter, D., Schmidt, R., Rabes, L., Gross, H.-M.
+*Efficient Multi-Task Scene Analysis with RGB-D Transformers*,
+in IEEE International Joint Conference on Neural Networks (IJCNN), pp. 1-10, 2023.
+
+<details>
+<summary>BibTeX</summary>
+
+```bibtex
+@inproceedings{emsaformer2023ijcnn,
+  title     = {{Efficient Multi-Task Scene Analysis with RGB-D Transformers}},
+  author    = {Fischedick, S{\"o}hnke and Seichter, Daniel and Schmidt, Robin and Rabes, Leonard and Gross, Horst-Michael},
+  booktitle = {IEEE International Joint Conference on Neural Networks (IJCNN)},
+  year      = {2023},
+  pages     = {1-10},
+  doi       = {10.1109/IJCNN54540.2023.10191977}
+}
+```
+
+</details>
+
+> Use `--instances-version emsanet` when preparing the SUNRGB-D dataset with `nicr-scene-analysis-datasets` to reproduce reported results.
+
+---
+
+**Efficient Multi-Task RGB-D Scene Analysis for Indoor Environments** ([IEEE Xplore](https://ieeexplore.ieee.org/document/9892852), [arXiv](https://arxiv.org/abs/2207.04526)):
+> Seichter, D., Fischedick, S., Köhler, M., Gross, H.-M.
+*Efficient Multi-Task RGB-D Scene Analysis for Indoor Environments*,
+in IEEE International Joint Conference on Neural Networks (IJCNN), pp. 1-10, 2022.
+
+<details>
+<summary>BibTeX</summary>
+
+```bibtex
+@inproceedings{emsanet2022ijcnn,
+  title     = {{Efficient Multi-Task RGB-D Scene Analysis for Indoor Environments}},
+  author    = {Seichter, Daniel and Fischedick, S{\"o}hnke and K{\"o}hler, Mona and Gross, Horst-Michael},
+  booktitle = {IEEE International Joint Conference on Neural Networks (IJCNN)},
+  year      = {2022},
+  pages     = {1-10},
+  doi       = {10.1109/IJCNN55064.2022.9892852}
+}
+```
+
+</details>
+
+> Use `--instances-version emsanet` when preparing the SUNRGB-D dataset with `nicr-scene-analysis-datasets` to reproduce reported results.
+
+---
+
+**Efficient and Robust Semantic Mapping for Indoor Environments** ([IEEE Xplore](https://ieeexplore.ieee.org/document/9812205), [arXiv](https://arxiv.org/pdf/2203.05836.pdf)):
+>Seichter, D., Langer, P., Wengefeld, T., Lewandowski, B., Höchemer, D., Gross, H.-M.
+*Efficient and Robust Semantic Mapping for Indoor Environments*
+in IEEE International Conference on Robotics and Automation (ICRA), pp. 9221-9227, 2022.
+
+<details>
+<summary>BibTeX</summary>
+
+```bibtex
+@inproceedings{semanticndtmapping2022icra,
+  title     = {{Efficient and Robust Semantic Mapping for Indoor Environments}},
+  author    = {Seichter, Daniel and Langer, Patrick and Wengefeld, Tim and Lewandowski, Benjamin and H{\"o}chemer, Dominik and Gross, Horst-Michael},
+  booktitle = {2022 International Conference on Robotics and Automation (ICRA)},
+  year      = {2022},
+  pages     = {9221-9227},
+  doi       = {10.1109/ICRA46639.2022.9812205}
+}
+```
+
+</details>
+
+---
+
+**Efficient RGB-D Semantic Segmentation for Indoor Scene Analysis** ([IEEE Xplore](https://ieeexplore.ieee.org/document/9561675),  [arXiv](https://arxiv.org/pdf/2011.06961.pdf)):
+>Seichter, D., Köhler, M., Lewandowski, B., Wengefeld T., Gross, H.-M.
+*Efficient RGB-D Semantic Segmentation for Indoor Scene Analysis*
+in IEEE International Conference on Robotics and Automation (ICRA), pp. 13525-13531, 2021.
+
+<details>
+<summary>BibTeX</summary>
+
+```bibtex
+@inproceedings{esanet2021icra,
+  title     = {{Efficient RGB-D Semantic Segmentation for Indoor Scene Analysis}},
+  author    = {Seichter, Daniel and K{\"o}hler, Mona and Lewandowski, Benjamin and Wengefeld, Tim and Gross, Horst-Michael},
+  booktitle = {IEEE International Conference on Robotics and Automation (ICRA)},
+  year      = {2021},
+  pages     = {13525-13531},
+  doi       = {10.1109/ICRA48506.2021.9561675}
+}
+```
+
+</details>
+
+---
+
+
+## Installation
+
+```bash
+git clone https://github.com/TUI-NICR/nicr-scene-analysis-datasets.git
+cd /path/to/this/repository
+
+# NOTE:
+# we recommend to have your desired OpenCV and PyTorch versions already installed,
+# otherwise you can add the following targets to install default versions
+# - withopencv: forces to install OpenCV (cv2) via opencv-python from pypi
+# - withtorch: forces to install PyTorch from pypi (might be CPU only)
+
+# full installation:
+# - withpreparation: requirements for preparing the datasets
+# - with3d: requirements for 3D processing (see entry points below)
+# - withauxiliarydata: requirements for generating auxiliary data (depth and embeddings)
+python -m pip install -e ".[withpreparation,with3d,withauxiliarydata]"
+
+# for usage only
+python -m pip install -e "./"
+```
+
+## Prepare dataset
+
+Please follow the instructions given in the respective dataset folder to prepare the datasets.
+
+- [Cityscapes](nicr_scene_analysis_datasets/datasets/cityscapes)
+- [COCO](nicr_scene_analysis_datasets/datasets/coco)
+- [Hypersim](nicr_scene_analysis_datasets/datasets/hypersim)
+- [NYUv2](nicr_scene_analysis_datasets/datasets/nyuv2)
+- [ScanNet](nicr_scene_analysis_datasets/datasets/scannet)
+- [SceneNet RGB-D](nicr_scene_analysis_datasets/datasets/scenenetrgbd)
+- [SUNRGB-D](nicr_scene_analysis_datasets/datasets/sunrgbd)
+
+
+## Usage
+### Entry points
+
+We provide several command-line entry points for common tasks:
+  - `nicr_sa_prepare_dataset`: prepare a dataset for usage
+  - `nicr_sa_prepare_labeled_point_clouds`: create labeled point clouds as ply files similar to ScanNet benchmark
+  - `nicr_sa_depth_viewer`: viewer for depth images
+  - `nicr_sa_semantic_instance_viewer`: viewer for semantic and instance (and panoptic) annotations
+  - `nicr_sa_labeled_pc_viewer`: viewer for labeled point clouds
+  - `nicr_sa_generate_auxiliary_data`: generate auxiliary data such as depth images or rgb and panoptic embeddings
+
+### How to use a dataset in a pipeline
+In the following, an example for Hypersim is given.
+
+First, specify the dataset path:
+
+```python
+dataset_path = '/path/to/prepared/hypersim'
+```
+
+With `sample_keys` you can specify what a sample of your dataset should contain.
+
+```python
+from nicr_scene_analysis_datasets import Hypersim
+
+sample_keys = (
+    'identifier',    # helps to know afterwards which sample was loaded
+    'rgb', 'depth',    # camera data
+    'rgb_intrinsics', 'depth_intrinsics', 'extrinsics',    # camera parameters
+    'semantic', 'instance', 'orientations', '3d_boxes', 'scene', 'normal'    # annotations
+)
+
+# list available sample keys
+print(Hypersim.sample_keys.get_available_sample_keys(split='train'))
+
+dataset_train = Hypersim(
+    dataset_path=dataset_path,
+    split='train',
+    sample_keys=sample_keys
+)
+
+# finally, you can iterate over the dataset
+for sample in dataset_train:
+    print(sample)
+
+# note: for usage along with pytorch, simply change the import above to
+from nicr_scene_analysis_datasets.pytorch import Hypersim
+```
+
+## Detectron2 usage (experimental support)
+
+The following example shows how a dataset, e.g., Hypersim, can be loaded through the [Detectron2](https://github.com/facebookresearch/detectron2) API.
+
+First, the API must be imported:
+
+```python
+# the import automatically registers all datasets to d2
+from nicr_scene_analysis_datasets import d2 as nicr_d2
+```
+
+This import registers all available datasets to the detectron2's [DatasetCatalog](https://detectron2.readthedocs.io/en/latest/modules/data.html#detectron2.data.DatasetCatalog) and [MetadataCatalog](https://detectron2.readthedocs.io/en/latest/modules/data.html#detectron2.data.MetadataCatalog) logic.
+Note that the Metadata can already be accessed (see below).
+However, the dataset path might be incorrect (i.e., when the dataset is not in detectron2's default directory).
+This path can be set by following function:
+
+```python
+# set the path for the dataset, so that d2 can use it
+# note, dataset_path must point to the actual dataset (e.g. ../datasets/hypersim)
+# this limits the API currently because only one dataset can be used at a time
+nicr_d2.set_dataset_path(dataset_path)
+```
+
+After doing this, the dataset can be used by detectron2:
+
+```python
+from detectron2.data import DatasetCatalog
+from detectron2.data import MetadataCatalog
+
+# get the dataset config
+dataset_config = MetadataCatalog.get('hypersim_test').dataset_config
+
+# get the dataset for usage
+dataset = DatasetCatalog.get('hypersim_test')
+```
+
+Note that the name is always a combination of the dataset's name and the split, which should be used.
+
+### Further Important Remarks
+
+The logic of our dataset implementation is different from the logic of detectron2.
+While we use classes that already provide data loaded from file in the correct format, the default [`DatasetMappper`](https://detectron2.readthedocs.io/en/latest/modules/data.html#detectron2.data.DatasetMapper) of detectron2 expects paths to files that should be loaded later on.
+
+To handle this, a special `NICRSceneAnalysisDatasetMapper` is provided to replace the default `DatasetMapper`.
+An example for doing that is given below:
+
+```python
+# use the mapper
+data_mapper = nicr_d2.NICRSceneAnalysisDatasetMapper(dataset_config)
+
+# pass data_mapper (in your custom Trainer class) to
+# build_detection_train_loader / build_detection_test_loader
+```
+
+In certain situations, multiple mappers are required (e.g., a target generator for panoptic segmentation, which combines semantic and instance to panoptic).
+For this use case, we further provide a helper class, which can be used to chain multiple mappers.
+
+```python
+chained_mapper = nicr_d2.NICRChainedDatasetMapper(
+    [data_mapper, panoptic_mapper]
+)
+```
+For further details, we refer to the usage in our [EMSANet repository](https://github.com/TUI-NICR/EMSANet/blob/main/external).
+
+The dataset can be used as an iterator (detectron2 usually does this) and can then be mapped with the custom mappers to generate the correct layout of the data.
+
+## Changelog
+
+**Version 0.8.3 (Oct 11, 2025)**
+- *no dataset preparation related changes*
+- switch from from flat to src layout
+- transition from setup.py to pyproject.toml for packaging (note that this means we are no longer able to detect
+  whether opencv and/or torch are installed, instead this check is now done at runtime)
+- use ruff for linting
+- remove Python 3.6 at all, do not test for Python 3.11 anymore, add testing for Python 3.12
+
+**Version 0.8.2 (Oct 6, 2025)**
+- *no dataset preparation related changes*
+- removed `semantic_n_classes` argument from ADE20k to be consistent with other datasets and `_AuxiliaryDataWrapper`
+- renamed `compute_embeddings` to `compute_mean_visual_embeddings` for better transparency
+- ensure that `_load_panoptic_embedding` returns panoptic ids as integers instead of strings
+
+**Version 0.8.1 (Sep 15, 2025)**
+- add new entrypoint `nicr_sa_generate_auxiliary_data` for generating auxiliary
+  data such as depth images or rgb embeddings and panoptic embeddings (by combining semantic and instance annotations)
+- add new `_AuxiliaryDataWrapper` class to wrap any exisiting dataset to support the
+  usage of auxiliary data
+- added 'with_auxiliary_data' argument to `get_dataset` function to enable
+  loading of auxiliary data
+
+**Version 0.8.0 (Nov 27, 2024)**
+- improve semantic instance viewer (`nicr_sa_semantic_instance_viewer`):
+  - add `--recursive` option to search for images recursively in subdirectories
+- add python executable to meta file
+- drop semantic*_colored stuff from all datasets (was never implemented for instances)
+  - colored semantic annotations can still be visualized with the `nicr_sa_semantic_instance_viewer`
+- add ADE20k dataset:
+  - include semantic and scene annotations from MIT Scene Parse Benchmark Challenge 2016
+  - include instance annotations from MIT Places Challenge 2017
+- fix link to NYUv2 dataset
+- `depth_mode` in `DepthDataset` is no longer an abstract property
+- store dataset_path in `DatasetBase`, add read-only property `dataset_path`
+- add `debug_print` to `DatasetBase` to print debug information, some minor
+  fixes with `_disable_prints`
+- add `_get_filename` to `DatasetBase` to get the filename of a sample by index
+
+**Version 0.7.0 (Jun 26, 2024)**
+- allow extracting both instance annotation versions for SUNRGB-D with a
+  single version of the dataset package: 'emsanet' and 'panopticndt', use
+  'emsanet' to reproduce results reported in EMSANet or EMSAFormer paper, and
+  'panopticndt' for follow-up papers
+- fix for missing creation meta files
+- NYUv2: do not create outdated `class_names_*.txt` and `class_colors_*.txt`
+  files anymore
+
+**Version 0.6.1 (Dec 5, 2023)**
+- force 'instance' sample key to always be of dtype uint16
+- force 'semantic' sample key to always be of dtype uint8 (i.e., for Cityscapes,
+  COCO, Hypersim, NYUv2 (13+40 classes), ScanNet (20, 40, 200), SceneNet RGB-D
+  and SUNRGB-D) or uint16 (i.e., for NYUv2 (894 classes), ScanNet (549 classes))
+- add test to verify the dtypes of each dataset
+- remove 'semantic_n_classes' argument from SceneNet RGB-D and set it to '13'
+- fix version format and parsing to be PEP440 compliant (required for more
+  recent packaging versions)
+- fix `--max-z-value` in `nicr_sa_labeled_pc_viewer` to work with additionally
+  given label files (`*-label-filepath`) as well
+- this version was an internal release only
+
+**Version 0.6.0 (Sep 26, 2023)**
+- SUNRGB-D:
+  - refactor and update instance creation from 3D boxes: annotations for
+    instances, boxes, and (instance) orientations have changed:
+    - ignore semantic stuff classes and void while matching boxes and point
+      clouds
+    - enhanced matching for similar classes (e.g., table <-> desk)
+    - resulting annotations feature a lot of more instances
+    - if you use the new instance annotations, please refer to this version of
+      the dataset as *SUNRGB-D (PanopticNDT version)* and to previous versions
+      with instance information as *SUNRGB-D (EMSANet version)*
+  - **note, version 0.6.0 is NOT compatible with previous versions, you will
+    get deviating results when applying EMSANet or EMSAFormer**
+- Hypersim:
+  - add more notes/comments for blacklisted scenes/camera trajectories
+  - do not use orientations by default (annotations provided by the dataset are
+    not consistent for instances within a semantic class), i.e., return an
+    empty OrientationDict for all samples unless `orientations_use` is enabled
+- `nicr_sa_labeled_pc_viewer`: add `--max-z-value` argument to limit the
+  maximum z-value for the point cloud viewer
+- `nicr_sa_depth_viewer`: add `image_nonzero` mode for scaling depth values
+  (`--mode` argument)
+- MIRA readers:
+  - add instance meta stuff
+  - terminate MIRA in a softer way (do not send SIGKILL, send SIGINT instead
+    and wait before sending again) to force propper termination (and profile
+    creation)
+- some test fixes
+
+**Version 0.5.6 (Sep 26, 2023)**
+- `ConcatDataset`:
+  - add `datasets` property to get the list of currently active datasets
+  - implement `load` to load a specific sample key for a given index (e.g.,
+    `load('rgb', 0)` loads the rgb image of the main dataset at index 0)
+- update citations
+- tests: some fixes, skip testing with Python 3.6, add testing with Python 3.11
+
+**Version 0.5.5 (Sep 08, 2023)**
+- make `creation_meta.json` optional to enable loading old datasets
+- some minor fixes (typos, ...)
+
+**Version 0.5.4 (Jun 07, 2023)**
+- SUNRGB-D:
+  - fix for `depth_force_mm=True`:
+    - divide by 8 (shift by 3 to right) instead of divide by 10
+    - updated depth stats
+    - for more details, see notes in [nicr_scene_analysis_datasets/datasets/sunrgbd/dataset.py](nicr_scene_analysis_datasets/datasets/sunrgbd/dataset.py#L213)
+    - note, for `depth_force_mm=False`, nothing changed, everything is as before (EMSANet / EMSAFormer)
+- SceneNet RGB-D: add support for instances and scene classes
+- add `identifier2idx()` to base dataset class to search for samples by identifier
+
+**Version 0.5.3 (Mar 31, 2023)**
+- *no dataset preparation related changes*
+- minor changes to `nicr_sa_prepare_labeled_point_clouds` and `nicr_sa_labeled_pc_viewer`
+
+**Version 0.5.2 (Mar 28, 2023)**
+- Hypersim: change instance encoding: do not view G and B channel as uint16 use bit shifting instead
+- add new scripts and update entry points:
+  - `nicr_sa_prepare_dataset`: prepare a dataset (replaces `python -m ...` calls)
+  - `nicr_sa_prepare_labeled_point_clouds`: create labeled point clouds as ply files similar to ScanNet benchmark
+  - `nicr_sa_depth_viewer`: viewer for depth images
+  - `nicr_sa_semantic_instance_viewer`: viewer for semantic and instance annotations
+  - `nicr_sa_labeled_pc_viewer`: viewer for labeled point clouds
+
+**Version 0.5.1 (Mar 01, 2023)**
+- refactor MIRA reader to support multiple datasets, create an abstract base class
+- ScanNet:
+  - blacklist broken frames due to invalid extrinsic parameters (see datasets/scannet/scannet.py)
+- Hypersim:
+  - IMPORTANT: version 0.5.1 is not compatible with ealier versions of the dataset
+  - convert all data to standard pinhole camera projections (without tilt-shift parameters, see datasets/hypersim/prepare_dataset.py for details)
+  - convert intrinsic parameters to standard format for usage in MIRA or ROS
+  - update depth train stats due to new data
+
+**Version 0.5.0 (Jan 04, 2023)**
+- add depth viewer and semantic-instance viewer command-line entrypoints
+- add support for ScanNet dataset
+- add ScanNet MIRA reader
+- add instance support to Hypersim MIRA reader
+- add static `get_available_sample_keys` to all datasets
+- add `depth_force_mm` to SUNRGB-D dataset class (same depth scale as for Hypersim, NYUv2, ScanNet, and SceneNet RGB-D)
+- add `ConcatDataset` and `pytorch.ConcatDataset` to concatenate multiple datasets
+- add `cameras` argument to constructors to apply a static camera filter
+- add instance support to Cityscapes dataset
+
+**Version 0.4.1 (Nov 12, 2022)**
+- *no dataset preparation related changes*
+- make normal extraction for NYUv2 dataset optional as the [precomputed normals](https://cs.nyu.edu/~deigen/dnl/normals_gt.tgz) are not publicly available any longer
+
+**Version 0.4.0 (July 15, 2022)**
+- *no dataset preparation related changes*
+- Hypersim: [BREAKING CHANGE TO V030] enable fixed depth stats
+- add experimental support for Detectron2
+- semantic_use_nyuv2_colors as option in SUNRGBD constructor
+- changed license to Apache 2.0

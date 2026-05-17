@@ -1,0 +1,22 @@
+matplotlib
+numpy
+pillow
+scipy
+nicr-scene-analysis-datasets>=0.8.3
+
+[test]
+scikit-image
+pytest>=3.0.2
+
+[withopencv]
+opencv-python
+
+[withtorch]
+torch
+torchvision
+
+[withtorch:python_version == "3.8"]
+torchmetrics==1.5.2
+
+[withtorch:python_version > "3.8"]
+torchmetrics==1.8.2

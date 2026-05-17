@@ -1,0 +1,7 @@
+[console_scripts]
+nicr_sa_depth_viewer = nicr_scene_analysis_datasets.scripts.viewer_depth:main
+nicr_sa_generate_auxiliary_data = nicr_scene_analysis_datasets.scripts.generate_auxiliary_data:main
+nicr_sa_labeled_pc_viewer = nicr_scene_analysis_datasets.scripts.viewer_labeled_point_cloud:main
+nicr_sa_prepare_dataset = nicr_scene_analysis_datasets.scripts.prepare_dataset:main
+nicr_sa_prepare_labeled_point_clouds = nicr_scene_analysis_datasets.scripts.prepare_labeled_point_clouds:main
+nicr_sa_semantic_instance_viewer = nicr_scene_analysis_datasets.scripts.viewer_semantic_instance:main

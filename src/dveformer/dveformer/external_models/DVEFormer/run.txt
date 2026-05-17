@@ -1,0 +1,20 @@
+python main.py \
+    --dataset nyuv2 \
+    --dataset-path ./datasets/nyuv2 \
+    --tasks dense-visual-embedding \
+    --raw-depth \
+    --enable-tf32 \
+    --encoder-amp bfp16 \
+    --context-module-amp bfp16 \
+    --decoder-amp bfp16 \
+    --weights-filepath ./trained_models/mixed/dveformer_reducedres_mixed.pth \
+    --dense-visual-embedding-decoder-n-channels-out 512 \
+    --dense-visual-embedding-decoder-n-upsamplings 0 \
+    --enable-linear-probing \
+    --linear-probing-weights-path ./trained_models/nyuv2/dveformer_reducedres_linear_probing_nyuv2.pth \
+    --validation-batch-size 2 \
+    --validation-only \
+    --visualize-validation \
+    --visualization-output-path ./results/visualized_outputs/nyuv2 \
+    --skip-sanity-check \
+    --wandb-mode disabled
