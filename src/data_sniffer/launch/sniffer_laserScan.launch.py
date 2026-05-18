@@ -13,7 +13,8 @@ def generate_launch_description():
         parameters=[{
             'topic_name': '/scan',
             'msg_type': 'LaserScan',
-            'output_dir': absolute_output_dir
+            'output_dir': absolute_output_dir,
+            'target_fps': 10.0
         }]
     )
 

@@ -9,8 +9,10 @@ import math
 import time
 from datetime import datetime
 
+import cv2
+from cv_bridge import CvBridge, CvBridgeError
 
-from sensor_msgs.msg import LaserScan
+from sensor_msgs.msg import LaserScan, Image
 from nav_msgs.msg import Odometry
 
 
@@ -33,6 +35,8 @@ class DataExporterNode(Node):
         self.min_interval = 1.0 / self.target_fps
         self.last_processed_time = 0.0  # 记录上一次处理的时间戳
 
+        self.cv_bridge = CvBridge()
+
         # 2. 目录创建与基础文件名前缀
         os.makedirs(output_dir, exist_ok=True)
         self.safe_topic_name = topic_name.replace('/', '_').strip('_')
@@ -54,7 +58,8 @@ class DataExporterNode(Node):
         # 5. 策略字典
         self.supported_types = {
             'LaserScan': {'class': LaserScan, 'callback': self.laserscan_callback},
-            'Odometry': {'class': Odometry, 'callback': self.odometry_callback}
+            'Odometry': {'class': Odometry, 'callback': self.odometry_callback},
+            'Image': {'class': Image, 'callback': self.image_callback}
         }
 
         # 6. 动态创建订阅者
@@ -134,7 +139,9 @@ class DataExporterNode(Node):
                                 f.write(f"{p[0]:.4f} {p[1]:.4f} {p[2]:.4f} {p[3]:.4f}\n")
                             else:
                                 f.write(f"{p[0]:.4f} {p[1]:.4f} {p[2]:.4f}\n")
-
+                elif fmt == 'image_file':
+                    # 使用 cv2.imwrite 直接写入硬盘。
+                    cv2.imwrite(filepath, data)
                 else:
                     self.get_logger().error(f"Unknown type: {fmt}")
 
@@ -157,7 +164,7 @@ class DataExporterNode(Node):
         try:
             self.data_queue.put_nowait(task)
 
-            # 进度打印逻辑可以保留在这里，或者移到 callback 中
+            # 进度打印逻辑
             if self.frame_count % 50 == 0:
                 self.get_logger().info(f'Received {self.frame_count} frames，Queue remained: {self.data_queue.qsize()}')
         except queue.Full:
@@ -195,6 +202,25 @@ class DataExporterNode(Node):
         data = [0, 0, 0, 0, 0, 0, 0]
         self._enqueue_task(csv_path, data, write_format='csv_row')
 
+    def image_callback(self, msg):
+        current_time = time.time()
+        # 降频逻辑
+        if (current_time - self.last_processed_time) >= self.min_interval:
+            self.last_processed_time = current_time
+            self.frame_count += 1
+
+            try:
+                # 使用 CvBridge 将 ROS Image 消息转换为 OpenCV 的 numpy 数组格式
+                # 'passthrough' 表示保持原有的通道数和位深（RGB就是8位3通道，Depth通常是16位单通道）
+                cv_image = self.cv_bridge.imgmsg_to_cv2(msg, desired_encoding='passthrough')
+
+                # 深度图（Depth）使用 '.png'，因为它是无损压缩，且支持16位数据，JPG会导致深度信息丢失
+                img_path = self.get_filepath('.png')
+
+                self._enqueue_task(img_path, cv_image, write_format='image_file')
+
+            except CvBridgeError as e:
+                self.get_logger().error(f"CvBridge Error: {e}")
     # ================= 节点销毁时的清理工作 =================
     def destroy_node(self):
         try:
