@@ -1,28 +1,28 @@
 #!/bin/bash
 
-echo "If you see this message, it means something you forget to change params in this bash"
-exit
-
+# 允许本地的 root 用户访问 X Server（Docker 容器默认以 root 运行）
 xhost +local:root
 
-# 镜像名称
-IMAGE_NAME="dustynv/ros:humble-pytorch-l4t-r35.2.1"
-
-# --- 关键修改：指向 SSD 上的工作空间 ---
-HOST_WORK_DIR="/mnt/ssd/ros2_ws"
-DOCKER_WORK_DIR="/root/ros2_ws"
+IMAGE_NAME="my_agx_env:humble-pytorch"
+HOST_WORK_DIR="/mnt/Y560SSD/Projects"
+DOCKER_WORK_DIR="/root/Projects"
+HOST_DATA_DIR="/mnt/Y560SSD/Data/ros_saved_data"
+DOCKER_DATA_DIR="/root/ros_exported_data"
 
 sudo docker run -it --rm \
     --runtime=nvidia \
     --network host \
-    --env="DISPLAY" \
+    --ipc=host \
+    --env="DISPLAY=$DISPLAY" \
     --env="QT_X11_NO_MITSHM=1" \
-        # ... 设置代理 ...
-    --env="http_proxy=http://127.0.0.1:7890" \
-    --env="https_proxy=http://127.0.0.1:7890" \
+    --env="http_proxy=http://127.0.0.1:10808" \
+    --env="https_proxy=http://127.0.0.1:10808" \
+    --env="ROS2_DOMAIN_ID=30" \
+    -e NVIDIA_DRIVER_CAPABILITIES=all \
+    --privileged \
     --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
     --volume="$HOST_WORK_DIR:$DOCKER_WORK_DIR" \
-    --volume="/dev/bus/usb:/dev/bus/usb" \
-    --device="/dev/video0:/dev/video0" \
+    --volume="$HOST_DATA_DIR:$DOCKER_DATA_DIR" \
+    --volume="/dev:/dev" \
     $IMAGE_NAME \
     bash
