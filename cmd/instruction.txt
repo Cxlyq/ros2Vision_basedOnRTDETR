@@ -13,6 +13,11 @@ colcon build --packages-select lslidar_msgs lslidar_driver
 source install/setup.bash
 ros2 launch lslidar_driver lsn10_launch.py
 
+# chassis
+colcon build --packages-select turn_on_wheeltec_robot wheeltec_robot_msg serial wheeltec_robot_urdf--symlink-install
+source install/setup.bash
+ros2 launch turn_on_wheeltec_robot turn_on_wheeltec_robot.launch.py
+
 # gazebo&tb4
 ros2 launch turtlebot4_ignition_bringup turtlebot4_ignition.launch.py world:=warehouse model:=standard
 
