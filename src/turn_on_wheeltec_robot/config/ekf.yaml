@@ -18,7 +18,7 @@ ekf_filter_node:
                             #如果设置太大系统可能等待太久，出现数据延迟
         print_diagnostics: false   #是否在终端里打印诊断信息
         debug: true               #是否开启“调试模式”，让 EKF 把所有运行日志写入文件。
-        debug_out_file: /home/wheeltec/debug/file.txt #指定调试输出文件的路径（仅在debug: true时生效）。
+        debug_out_file: '/root/ros_exported_data/ekf_debug.txt' #指定调试输出文件的路径（仅在debug: true时生效）。
 
         publish_tf: true  # 是否发布 odom → base_link 的 tf 转换
         publish_acceleration: false  # 是否发布线加速度话题/accel/filtered（一般不需要）

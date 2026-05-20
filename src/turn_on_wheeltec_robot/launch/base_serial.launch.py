@@ -34,7 +34,7 @@ def include_imu_launch(context, *args, **kwargs):
     
     # 公共参数
     common_params = {
-        'usart_port_name': '/dev/wheeltec_controller',
+        'usart_port_name': '/dev/chassis_mcu',
         'serial_baud_rate': 115200,
         'robot_frame_id': 'base_footprint',
         'odom_frame_id': 'odom_combined',
