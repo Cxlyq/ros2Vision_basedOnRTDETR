@@ -11,11 +11,11 @@ def generate_launch_description():
 
     # === 2. 话题重映射 ===
     remappings = [
-        ('rgb/image', '/oakd/rgb/preview/image_raw'),
-        ('depth/image', '/oakd/rgb/preview/depth'),
-        ('rgb/camera_info', '/oakd/rgb/preview/camera_info'),
+        ('rgb/image', '/camera/color/image_raw'),
+        ('depth/image', '/camera/depth/image_raw'),
+        ('rgb/camera_info', '/camera/color/camera_info'),
         ('scan', '/scan_filtered'),
-        ('odom', '/odom')
+        ('odom', '/odom_combined')
     ]
 
     # === 3. RTAB-Map 建图后端节点 ===
