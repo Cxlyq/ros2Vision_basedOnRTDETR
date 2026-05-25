@@ -32,7 +32,6 @@ __pycache__/
 *.engine
 *.tar.gz
 # 数据集忽略
-coco/
 output/
 
 # ===========================

@@ -53,11 +53,6 @@ src/nicr_scene_analysis_datasets/datasets/cityscapes/__init__.py
 src/nicr_scene_analysis_datasets/datasets/cityscapes/cityscapes.py
 src/nicr_scene_analysis_datasets/datasets/cityscapes/dataset.py
 src/nicr_scene_analysis_datasets/datasets/cityscapes/prepare_dataset.py
-src/nicr_scene_analysis_datasets/datasets/coco/README.md
-src/nicr_scene_analysis_datasets/datasets/coco/__init__.py
-src/nicr_scene_analysis_datasets/datasets/coco/coco.py
-src/nicr_scene_analysis_datasets/datasets/coco/dataset.py
-src/nicr_scene_analysis_datasets/datasets/coco/prepare_dataset.py
 src/nicr_scene_analysis_datasets/datasets/hypersim/README.md
 src/nicr_scene_analysis_datasets/datasets/hypersim/__init__.py
 src/nicr_scene_analysis_datasets/datasets/hypersim/dataset.py
