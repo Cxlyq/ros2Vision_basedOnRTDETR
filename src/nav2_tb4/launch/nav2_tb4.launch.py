@@ -8,7 +8,7 @@ def generate_launch_description():
     pkg_dir = get_package_share_directory('nav2_tb4')
     nav2_params_path = os.path.join(pkg_dir, 'params', 'nav2_slam_params.yaml')
 
-    # 定义我们要启动的 Nav2 生命周期节点（剔除了 map_server 和 amcl）
+    # 定义要启动的 Nav2 生命周期节点（剔除了 map_server 和 amcl）
     lifecycle_nodes =['controller_server',
                        'planner_server',
                        'behavior_server',
@@ -28,7 +28,7 @@ def generate_launch_description():
             parameters=[nav2_params_path],
             remappings=remappings),
 
-        # 2. 全局规划器 (NavFn)
+        # 2. 全局规划器 (SmacPlanner2D)
         Node(
             package='nav2_planner',
             executable='planner_server',
@@ -67,7 +67,7 @@ def generate_launch_description():
             executable='lifecycle_manager',
             name='lifecycle_manager_navigation',
             output='screen',
-            parameters=[{'use_sim_time': True},
+            parameters=[{'use_sim_time': False},
                         {'autostart': True},
                         {'node_names': lifecycle_nodes}])
     ])
