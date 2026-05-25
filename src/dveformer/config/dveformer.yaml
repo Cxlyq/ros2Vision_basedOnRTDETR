@@ -3,8 +3,8 @@ dveformer_node:
     # ==========================================
     # 1. 核心模型权重与设备 (Core Model & Device)
     # ==========================================
-    dveformer_weights_path: "trained_models/mixed/dveformer_fullres_mixed.pth"
-    alpha_clip_ckpt_path: "/nas/chenxu103/.cache/nicr_scene_analysis_datasets/auxiliary_data/alpha_clip/l14-336-grit-20m.pth"
+    dveformer_weights_path: "/root/Projects/ros2Vision_basedOnRTDETR/src/dveformer/dveformer/external_models/DVEFormer/trained_models/mixed/dveformer_fullres_mixed.pth"
+    alpha_clip_ckpt_path: "/root/Projects/ros2Vision_basedOnRTDETR/src/dveformer/dveformer/external_models/DVEFormer/trained_models/l14-336-grit-20m.pth"
     alpha_clip_model_name: "ViT-L/14@336px" # 隐藏在加载函数中的参数
     device: "cuda:0"
 

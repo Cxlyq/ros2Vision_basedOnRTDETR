@@ -213,7 +213,10 @@ class DVEFormerNode(Node):
             return
 
         camera_frame_id = header.frame_id
-
+        if "optical" not in camera_frame_id.lower():
+            self.get_logger().warn_once(
+                f"[Warning] header.frame_id is '{camera_frame_id}', except camera_depth_optional_frame!"
+            )
         # 1. 获取 Camera 到 Map 的 TF 变换
         try:
             # 允许 0.1 秒的等待时间，获取图像时间戳时刻的位姿
@@ -224,7 +227,7 @@ class DVEFormerNode(Node):
                 timeout=rclpy.duration.Duration(seconds=0.1)
             )
         except (LookupException, ConnectivityException, ExtrapolationException) as e:
-            self.get_logger().warn(f"TF 变换获取失败: {e}")
+            self.get_logger().debug(f"[Error] TF 变换获取失败: {e}")
             return
 
         # 构造 4x4 变换矩阵 (T_map_cam)
@@ -244,6 +247,9 @@ class DVEFormerNode(Node):
         valid_mask = (img_depth > 0) & (img_depth < self.depth_max)
 
         z = img_depth[valid_mask]
+        if z.shape[0] == 0:
+            self.get_logger().warn(f"[?] Current depth frame has no valid data.")
+            return
         u_valid = u[valid_mask]
         v_valid = v[valid_mask]
 

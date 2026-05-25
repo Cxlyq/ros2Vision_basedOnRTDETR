@@ -28,6 +28,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
+            'simpleDVE.py = dveformer.simpleDVE:main',
         ],
     },
 )
