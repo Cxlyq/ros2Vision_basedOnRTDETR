@@ -2,6 +2,7 @@ rtabmap:
   ros__parameters:
     frame_id: "base_link"  # 机器人的中心坐标系
     use_sim_time: false # 适配实机
+    wait_for_transform: 0.2
     subscribe_depth: true # 订阅深度图
     subscribe_scan: true  # 订阅 2D 激光雷达
     approx_sync: true  # 允许时间戳微小偏差
@@ -59,6 +60,7 @@ rtabmap_viz:
   ros__parameters:
     frame_id: "base_link"  # 机器人的中心坐标系
     use_sim_time: false
+    wait_for_transform: 0.2
     subscribe_depth: true # 订阅深度图
     subscribe_scan: true  # 订阅 2D 激光雷达
     approx_sync: true  # 允许时间戳微小偏差
