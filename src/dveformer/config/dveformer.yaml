@@ -1,4 +1,4 @@
-dveformer_node:
+dveformer:
   ros__parameters:
     # ==========================================
     # 1. 核心模型权重与设备 (Core Model & Device)
