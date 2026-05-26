@@ -64,7 +64,7 @@ class MockDataset:
 class DVEFormerNode(Node):
     def __init__(self):
         super().__init__('dveformer_node')
-
+        self.get_logger().info("[*] Loading configs for DVEFormer node...")
         # 1. 声明并读取所有参数
         self.declare_parameters(
             namespace='',
@@ -108,22 +108,25 @@ class DVEFormerNode(Node):
         self.cy = None
         self._intrinsics_initialized = False  # 用于防止日志刷屏的标志位
 
-        self.get_logger().info("[Init] Loading Models... This may take a while.")
-
         # 2. 初始化 DVEFormer 模型
+        self.get_logger().info("[*] Loading Models(0/2)... This may take a while.")
         self.model, self.preprocessor = self._init_dveformer(dveformer_ckpt)
 
         # 3. 初始化 Alpha-CLIP 文本编码器
+        self.get_logger().info("[*] Loading Models(1/2)... This may take a while.")
         self.clip_model = self._init_alpha_clip(clip_model_name, clip_ckpt)
 
+        self.get_logger().info("[*] Models loaded(2/2)")
         # 4. 状态变量
         self.cv_bridge = CvBridge()
         self.current_target_string = None
         self.current_text_embeddings = None
 
+        self.get_logger().info("[*] Initializing Publisher and Subscriber(0/6)...")
         # 5. 初始化 TF2 监听器
         self.tf_buffer = Buffer()
         self.tf_listener = TransformListener(self.tf_buffer, self)
+        self.get_logger().info("[*] TF listener initialized(1/6)...")
 
         # 6. 建立 ROS 2 话题发布者 (Publisher)
         # pub_aim_encode 发布语义字符串编码信息
@@ -132,12 +135,15 @@ class DVEFormerNode(Node):
             self.get_parameter('pub_aim_encode_topic').value,
             10
         )
+        self.get_logger().info("[*] Aim encode publisher initialized(2/6)...")
+
         # pub_voxel_topic 建立体素发布者
         self.pub_voxel = self.create_publisher(
             SemanticVoxelArray,
             self.get_parameter('pub_voxel_topic').value,
             10
         )
+        self.get_logger().info("[*] Semantic voxel publisher initialized(3/6)...")
 
         # 7. 建立 ROS 2 话题订阅者 (Subscriber)
         # 订阅 CameraInfo 话题
@@ -147,6 +153,7 @@ class DVEFormerNode(Node):
             self.camera_info_callback,
             10
         )
+        self.get_logger().info("[*] Camera info subscriber initialized(4/6)...")
         # 文本指令订阅：触发文本特征更新
         self.sub_aim = self.create_subscription(
             String,
@@ -154,6 +161,7 @@ class DVEFormerNode(Node):
             self.aim_callback,
             10
         )
+        self.get_logger().info("[*] Aim text subscriber initialized(5/6)...")
         # RGBD 时间戳对齐订阅 (使用 ApproximateTimeSynchronizer 容忍微小的时间偏差)
         self.sub_rgb = message_filters.Subscriber(self, Image, self.get_parameter('sub_rgb_topic').value)
         self.sub_depth = message_filters.Subscriber(self, Image, self.get_parameter('sub_depth_topic').value)
@@ -163,10 +171,12 @@ class DVEFormerNode(Node):
             slop=0.1  # 允许 0.1 秒的时间戳误差
         )
         self.ts.registerCallback(self.rgbd_callback)
+        self.get_logger().info("[*] RGB-D combined subscriber initialized(6/6)...")
 
-        self.get_logger().info("[Init] DVEFormer Node has been successfully started!")
+        self.get_logger().info("[*] DVEFormer Node has been successfully started!")
 
     def _init_dveformer(self, weights_path):
+        self.get_logger().info("[*] Loading DVEFormer model...")
         parser = ArgParserDVEFormer()
         args = parser.parse_args([])
 
@@ -195,11 +205,14 @@ class DVEFormerNode(Node):
 
         mock_dataset = MockDataset()
         preprocessor = get_preprocessor(args, dataset=mock_dataset, phase='test', multiscale_downscales=None)
+        self.get_logger().info("[*] DVEFormer model loaded successfully!")
         return model, preprocessor
 
     def _init_alpha_clip(self, model_name, ckpt_path):
+        self.get_logger().info("[*] Loading AlphaCLIP model...")
         model, _ = alpha_clip.load(model_name, alpha_vision_ckpt_pth=ckpt_path, device=self.device)
         model.eval()
+        self.get_logger().info("[*] AlphaCLIP model loaded successfully!")
         return model
 
     def process_and_publish_voxels(self, dense_features, img_depth, header):
@@ -209,13 +222,13 @@ class DVEFormerNode(Node):
         # 确保调用该函数时相机内参已加载成功
         if self.fx is None:
             # warn_once 只报一次警
-            self.get_logger().warn_once("[Mapping] Waiting for CameraInfo to initialize intrinsics...")
+            self.get_logger().warn_once("[?] Waiting for CameraInfo to initialize intrinsics...")
             return
 
         camera_frame_id = header.frame_id
         if "optical" not in camera_frame_id.lower():
             self.get_logger().warn_once(
-                f"[Warning] header.frame_id is '{camera_frame_id}', except camera_depth_optional_frame!"
+                f"[?] header.frame_id is '{camera_frame_id}', except camera_depth_optional_frame!"
             )
         # 1. 获取 Camera 到 Map 的 TF 变换
         try:
@@ -227,7 +240,7 @@ class DVEFormerNode(Node):
                 timeout=rclpy.duration.Duration(seconds=0.1)
             )
         except (LookupException, ConnectivityException, ExtrapolationException) as e:
-            self.get_logger().debug(f"[Error] TF 变换获取失败: {e}")
+            self.get_logger().debug(f"[!] TF 变换获取失败: {e}")
             return
 
         # 构造 4x4 变换矩阵 (T_map_cam)
@@ -309,7 +322,7 @@ class DVEFormerNode(Node):
             voxel_array_msg.voxels.append(vox_msg)
 
         self.pub_voxel.publish(voxel_array_msg)
-        self.get_logger().info(f"[Mapping] Published {num_unique_voxels} semantic voxels to map.")
+        self.get_logger().info(f"[*] Published {num_unique_voxels} semantic voxels to map.")
 
     def extract_image_features(self, img_rgb, img_depth, identifier):
         """修改自原脚本，现在直接接收 numpy 数组而非文件路径"""
@@ -348,7 +361,7 @@ class DVEFormerNode(Node):
         # 仅在第一次获取到内参时打印日志
         if not self._intrinsics_initialized:
             self.get_logger().info(
-                f"[Camera] Intrinsics successfully initialized from topic: "
+                f"[*] Intrinsics successfully initialized from topic: "
                 f"fx={self.fx:.2f}, fy={self.fy:.2f}, cx={self.cx:.2f}, cy={self.cy:.2f}"
             )
             self._intrinsics_initialized = True
@@ -365,7 +378,7 @@ class DVEFormerNode(Node):
             return # 目标没变，不需要重复提取
 
         self.current_target_string = target_str
-        self.get_logger().info(f"[Aim] Received new target: '{target_str}'")
+        self.get_logger().info(f"[*] Received new target: '{target_str}'")
 
         # 1. Prompt 工程与 Tokenize
         formatted_prompt = self.prompt_template.format(target_str)
@@ -376,7 +389,7 @@ class DVEFormerNode(Node):
             text_features = self.clip_model.encode_text(tokens)
             self.current_text_embeddings = text_features / text_features.norm(dim=-1, keepdim=True)
 
-        self.get_logger().info("[Aim] Text embedding calculated successfully.")
+        self.get_logger().info("[*] Text embedding calculated successfully.")
 
         # 3. 组装 ROS 2 消息并发布
         embed_msg = TargetEmbedding()
@@ -388,12 +401,13 @@ class DVEFormerNode(Node):
         embed_msg.embedding = embedding_list
 
         self.pub_aim_encode.publish(embed_msg)
-        self.get_logger().info(f"[Aim] Published 768-dim embedding for '{target_str}' to back-end.")
+        self.get_logger().info(f"[*] Published 768-dim embedding for '{target_str}' to back-end.")
 
     def rgbd_callback(self, rgb_msg: Image, depth_msg: Image):
         """
         核心回调：每帧触发，进行特征提取与跨模态匹配
         """
+        self.get_logger().info(f"[*] Received new RGB-D images")
         # 1. 强校验并转换为 numpy
         try:
             # 强制转为 RGB 3通道
@@ -401,7 +415,7 @@ class DVEFormerNode(Node):
             # 使用 passthrough 接收深度，通常是 16UC1 毫米级 或 32FC1 米级
             img_depth_raw = self.cv_bridge.imgmsg_to_cv2(depth_msg, desired_encoding='passthrough')
         except Exception as e:
-            self.get_logger().error(f"[Error] cv_bridge conversion failed: {e}")
+            self.get_logger().error(f"[!] cv_bridge conversion failed: {e}")
             return
 
         # 确保深度图是 float32 单通道
@@ -443,15 +457,14 @@ class DVEFormerNode(Node):
                 self.get_logger().debug("[Align] Auto-padded Depth from 640x400 to 640x480.")
             else:
                 self.get_logger().warn(
-                    f"[Warn] Unhandled resolution mismatch: RGB {rgb_w}x{rgb_h}, Depth {depth_w}x{depth_h}")
+                    f"[?] Unhandled resolution mismatch: RGB {rgb_w}x{rgb_h}, Depth {depth_w}x{depth_h}")
                 return
         elif rgb_w != depth_w or rgb_h != depth_h:
-            self.get_logger().error("[Error] Critical dimension mismatch requiring complex geometric registration.")
+            self.get_logger().error("[!] Critical dimension mismatch requiring complex geometric registration.")
             return
         # ==========================================================
 
-
-
+        self.get_logger().info(f"[*] Extracting features from RGB-D image...")
         # 深度数据预处理
         img_depth *= self.depth_scale
         if self.depth_max is not None:
@@ -464,6 +477,7 @@ class DVEFormerNode(Node):
         # 3. 提取特征后，立刻执行 3D 投影和体素化广播
         self.process_and_publish_voxels(dense_features, img_depth_raw.astype(np.float32) * self.depth_scale,
                                         rgb_msg.header)
+        self.get_logger().info(f"[*] Semantic voxel published")
 
 
 def main(args=None):
@@ -473,7 +487,7 @@ def main(args=None):
     try:
         rclpy.spin(node)
     except KeyboardInterrupt:
-        node.get_logger().info("Keyboard Interrupt, shutting down...")
+        node.get_logger().info("[!] Keyboard Interrupt, shutting down...")
     finally:
         node.destroy_node()
         rclpy.shutdown()
