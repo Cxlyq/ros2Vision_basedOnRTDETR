@@ -423,7 +423,7 @@ class DVEFormerNode(Node):
         """
         核心回调：每帧触发，进行特征提取与跨模态匹配
         """
-        self.get_logger().info(f"[*] Received new RGB-D images", throttle_duration_sec=5.0)
+        self.get_logger().info(f"[*] Received new RGB-D images")
         # 1. 强校验并转换为 numpy
         try:
             # 强制转为 RGB 3通道
@@ -480,7 +480,7 @@ class DVEFormerNode(Node):
             return
         # ==========================================================
 
-        self.get_logger().info(f"[*] Extracting features from RGB-D image...", throttle_duration_sec=5.0)
+        self.get_logger().info(f"[*] Extracting features from RGB-D image...")
         # 深度数据预处理
         img_depth *= self.depth_scale
         if self.depth_max is not None:
@@ -493,7 +493,7 @@ class DVEFormerNode(Node):
         # 3. 提取特征后，立刻执行 3D 投影和体素化广播
         self.process_and_publish_voxels(dense_features, img_depth_raw.astype(np.float32) * self.depth_scale,
                                         rgb_msg.header)
-        self.get_logger().info(f"[*] Semantic voxel published", throttle_duration_sec=5.0)
+        self.get_logger().info(f"[*] Semantic voxel published")
 
 
 def main(args=None):
