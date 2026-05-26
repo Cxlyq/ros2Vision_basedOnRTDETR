@@ -1,0 +1,14 @@
+# 文件路径: src/auto_exploration/config/exploration.yaml
+auto_exploration:
+  ros__parameters:
+    # 话题与坐标系设定
+    map_topic: "/map"
+    robot_frame: "base_link"
+    global_frame: "map"
+
+    # 节点控制参数
+    loop_rate: 1.0                # 探图主循环的频率 (Hz)
+
+    # 算法阈值 (提前预留)
+    frontier_size_threshold: 20   # 边界至少包含多少个连续的栅格才算有效 (过滤噪点)
+    obstacle_inflation_radius: 5  # 障碍物膨胀格数，防止算出的目标点贴墙太近
