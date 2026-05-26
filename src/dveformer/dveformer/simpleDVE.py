@@ -242,10 +242,7 @@ class DVEFormerNode(Node):
             )
         except ExtrapolationException as e:
             # 如果精确时间点找不到，退而求其次，请求 TF 树中当前最新的有效变换
-            self.get_logger().warn(
-                f"[?] RTAB-Map 存在延迟，切换至最新可用位姿。误差细节: {e}",
-                throttle_duration_sec=5.0
-            )
+            self.get_logger().warn(f"[?] RTAB-Map 存在延迟，切换至最新可用位姿。误差细节: {e}")
             try:
                 t = self.tf_buffer.lookup_transform(
                     self.map_frame_id,
@@ -338,7 +335,7 @@ class DVEFormerNode(Node):
             voxel_array_msg.voxels.append(vox_msg)
 
         self.pub_voxel.publish(voxel_array_msg)
-        self.get_logger().info(f"[*] Published {num_unique_voxels} semantic voxels to map.", throttle_duration_sec=5.0)
+        self.get_logger().info(f"[*] Published {num_unique_voxels} semantic voxels to map.")
 
     def extract_image_features(self, img_rgb, img_depth, identifier):
         """修改自原脚本，现在直接接收 numpy 数组而非文件路径"""
