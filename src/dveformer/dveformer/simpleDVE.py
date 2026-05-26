@@ -14,10 +14,10 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(current_dir, 'external_models'))
 from nicr_mt_scene_analysis.data import move_batch_to_device
 from nicr_mt_scene_analysis.data import mt_collate
-from external_models.DVEFormer.dveformer.args import ArgParserDVEFormer
-from external_models.DVEFormer.dveformer.model import DVEFormer
-from external_models.DVEFormer.dveformer.weights import load_weights
-from external_models.DVEFormer.dveformer.preprocessing import get_preprocessor
+from .external_models.DVEFormer.dveformer.args import ArgParserDVEFormer
+from .external_models.DVEFormer.dveformer.model import DVEFormer
+from .external_models.DVEFormer.dveformer.weights import load_weights
+from .external_models.DVEFormer.dveformer.preprocessing import get_preprocessor
 import alpha_clip
 
 # messages
