@@ -240,7 +240,7 @@ class DVEFormerNode(Node):
                 timeout=rclpy.duration.Duration(seconds=0.1)
             )
         except (LookupException, ConnectivityException, ExtrapolationException) as e:
-            self.get_logger().debug(f"[!] TF 变换获取失败: {e}")
+            self.get_logger().info(f"[!] TF 变换获取失败: {e}")
             return
 
         # 构造 4x4 变换矩阵 (T_map_cam)
