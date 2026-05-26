@@ -409,6 +409,49 @@ class DVEFormerNode(Node):
         if img_depth.ndim == 3:
             img_depth = img_depth[:, :, 0]
 
+        # ==========================================================
+        # 新增适配Gemini pro的 RGB-D 异构分辨率对齐逻辑
+        # 目标：将 640x400 的深度图安全转换为 640x480，不破坏物理光心
+        # ==========================================================
+        rgb_h, rgb_w = img_rgb.shape[:2]
+        depth_h, depth_w = img_depth.shape[:2]
+
+        if rgb_w == depth_w and rgb_h != depth_h:
+            if rgb_h == 480 and depth_h == 400:
+                # 计算需要补齐的总高度差 (通常是 80)
+                diff_h = rgb_h - depth_h
+                top_pad = diff_h // 2  # 顶部补 40 行
+                bottom_pad = diff_h - top_pad  # 底部补 40 行
+
+                # 使用 numpy.pad 进行极速 Zero-Padding
+                img_depth = np.pad(
+                    img_depth,
+                    pad_width=((top_pad, bottom_pad), (0, 0)),
+                    mode='constant',
+                    constant_values=0
+                )
+
+                # 同步处理原始数据副本（用于后续的 3D 体素化发布）
+                img_depth_raw = np.pad(
+                    img_depth_raw,
+                    pad_width=((top_pad, bottom_pad), (0, 0)),
+                    mode='constant',
+                    constant_values=0
+                )
+
+                # 日志降级为 debug 防止刷屏，只在需要调试时查看
+                self.get_logger().debug("[Align] Auto-padded Depth from 640x400 to 640x480.")
+            else:
+                self.get_logger().warn(
+                    f"[Warn] Unhandled resolution mismatch: RGB {rgb_w}x{rgb_h}, Depth {depth_w}x{depth_h}")
+                return
+        elif rgb_w != depth_w or rgb_h != depth_h:
+            self.get_logger().error("[Error] Critical dimension mismatch requiring complex geometric registration.")
+            return
+        # ==========================================================
+
+
+
         # 深度数据预处理
         img_depth *= self.depth_scale
         if self.depth_max is not None:

@@ -14,6 +14,7 @@ rtabmap:
     "Reg/Strategy": "1"  # 优先使用雷达(ICP)来纠正里程计
     "Reg/Force3DoF": "true" # 根据https://github.com/introlab/rtabmap_ros/issues/865
     "RGBD/NeighborLinkRefining": "true"
+    "Mem/DepthAsMask": "false"
 
     # ======== 强制开启 3D 射线追踪与地面高度过滤 ========
     "Grid/3D": "true"  # 强迫 RTAB-Map 在 3D 空间中计算雷达射线，而不是拍扁在 2D 里算
@@ -71,6 +72,7 @@ rtabmap_viz:
     "Grid/Sensor": "0"
     "Reg/Strategy": "1"  # 优先使用雷达(ICP)来纠正里程计
     "RGBD/NeighborLinkRefining": "true"
+    "Mem/DepthAsMask": "false"
 
     # ======== 强制开启 3D 射线追踪与地面高度过滤 ========
     "Grid/3D": "true"  # 强迫 RTAB-Map 在 3D 空间中计算雷达射线，而不是拍扁在 2D 里算
