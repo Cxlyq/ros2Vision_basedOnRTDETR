@@ -3,6 +3,7 @@ import sys
 import rclpy
 from rclpy.node import Node
 from rclpy.duration import Duration
+from rclpy import time
 from cv_bridge import CvBridge
 import numpy as np
 import cv2
@@ -239,8 +240,23 @@ class DVEFormerNode(Node):
                 header.stamp,
                 timeout=rclpy.duration.Duration(seconds=0.1)
             )
-        except (LookupException, ConnectivityException, ExtrapolationException) as e:
-            self.get_logger().info(f"[!] TF 变换获取失败: {e}")
+        except ExtrapolationException as e:
+            # 如果精确时间点找不到，退而求其次，请求 TF 树中当前最新的有效变换
+            self.get_logger().warn(
+                f"[?] RTAB-Map 存在延迟，切换至最新可用位姿。误差细节: {e}",
+                throttle_duration_sec=5.0
+            )
+            try:
+                t = self.tf_buffer.lookup_transform(
+                    self.map_frame_id,
+                    camera_frame_id,
+                    rclpy.time.Time()  # 请求最新位姿
+                )
+            except Exception as inner_e:
+                self.get_logger().error(f"[!] Latest TF also unavailable: {inner_e}")
+                return
+        except (LookupException, ConnectivityException) as e:
+            self.get_logger().debug(f"[!] TF Transform dropped for frame {camera_frame_id}: {e}")
             return
 
         # 构造 4x4 变换矩阵 (T_map_cam)
@@ -322,7 +338,7 @@ class DVEFormerNode(Node):
             voxel_array_msg.voxels.append(vox_msg)
 
         self.pub_voxel.publish(voxel_array_msg)
-        self.get_logger().info(f"[*] Published {num_unique_voxels} semantic voxels to map.")
+        self.get_logger().info(f"[*] Published {num_unique_voxels} semantic voxels to map.", throttle_duration_sec=5.0)
 
     def extract_image_features(self, img_rgb, img_depth, identifier):
         """修改自原脚本，现在直接接收 numpy 数组而非文件路径"""
@@ -407,7 +423,7 @@ class DVEFormerNode(Node):
         """
         核心回调：每帧触发，进行特征提取与跨模态匹配
         """
-        self.get_logger().info(f"[*] Received new RGB-D images")
+        self.get_logger().info(f"[*] Received new RGB-D images", throttle_duration_sec=5.0)
         # 1. 强校验并转换为 numpy
         try:
             # 强制转为 RGB 3通道
@@ -464,7 +480,7 @@ class DVEFormerNode(Node):
             return
         # ==========================================================
 
-        self.get_logger().info(f"[*] Extracting features from RGB-D image...")
+        self.get_logger().info(f"[*] Extracting features from RGB-D image...", throttle_duration_sec=5.0)
         # 深度数据预处理
         img_depth *= self.depth_scale
         if self.depth_max is not None:
@@ -477,7 +493,7 @@ class DVEFormerNode(Node):
         # 3. 提取特征后，立刻执行 3D 投影和体素化广播
         self.process_and_publish_voxels(dense_features, img_depth_raw.astype(np.float32) * self.depth_scale,
                                         rgb_msg.header)
-        self.get_logger().info(f"[*] Semantic voxel published")
+        self.get_logger().info(f"[*] Semantic voxel published", throttle_duration_sec=5.0)
 
 
 def main(args=None):
