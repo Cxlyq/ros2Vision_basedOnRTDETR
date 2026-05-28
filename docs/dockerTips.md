@@ -36,6 +36,7 @@ sudo systemctl show --property=Enviroment docker
 
 ## 配置Docker存储环境
 因为Jetson开发版自带空间小，因此必须外挂硬盘使用。
+
 ! 注意，因为Jetson供电问题，必须限制硬盘访问速度，否则会频繁掉电掉盘。
 
 - 挂载硬盘
