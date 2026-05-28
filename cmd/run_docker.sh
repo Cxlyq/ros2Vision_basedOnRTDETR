@@ -3,7 +3,7 @@
 # 允许本地的 root 用户访问 X Server（Docker 容器默认以 root 运行）
 xhost +local:root
 
-IMAGE_NAME="my_agx_env:humble-pytorch"
+IMAGE_NAME="ros2-dveformer-env:v1.0"
 HOST_WORK_DIR="/mnt/Y560SSD/Projects"
 DOCKER_WORK_DIR="/root/Projects"
 HOST_DATA_DIR="/mnt/Y560SSD/Data/ros_saved_data"
