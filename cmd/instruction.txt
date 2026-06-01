@@ -3,12 +3,12 @@ cd ~/P*/r*/lib/libuvc/build
 make install
 ldconfig
 
-# build astra_camera
+# astra_camera
 colcon build --packages-select astra_camera astra_camera_msgs --event-handlers console_direct+ --cmake-args -DCMAKE_BUILD_TYPE=Release
 source install/setup.bash
 ros2 launch astra_camera gemini.launch.xml
 
-# build lslidar
+# lslidar
 colcon build --packages-select lslidar_msgs lslidar_driver
 source install/setup.bash
 ros2 launch lslidar_driver lsn10_launch.py

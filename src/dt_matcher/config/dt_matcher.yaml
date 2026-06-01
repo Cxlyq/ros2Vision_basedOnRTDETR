@@ -1,0 +1,20 @@
+dt_matcher_node:
+  ros__parameters:
+    # 话题名称配置
+    sub_voxel_topic: "/dveformer/semantic_voxels"
+    sub_aim_encode_topic: "/dveformer/aim_encode"
+    pub_goal_topic: "/goal_pose" # Nav2 默认的标准单点导航目标话题
+
+    # 地图体素配置
+    voxel_size: 0.1 # 物理尺寸（米），必须与前端保持一致
+
+    # 体素更新策略配置
+    # 可选值：
+    # "replace"  - 完全更新（相信最新帧）
+    # "extend"   - 仅扩展（相信历史帧）
+    # "fuse"     - 融合扩展（EMA滑动平均）
+    update_strategy: "extend"
+
+    # 当 update_strategy 为 "fuse" 时的权重系数
+    new_voxel_weight: 0.8 # 最新一帧的数据权重 (alpha)
+    old_voxel_weight: 0.2 # 列表旧数据的权重 (1 - alpha)
