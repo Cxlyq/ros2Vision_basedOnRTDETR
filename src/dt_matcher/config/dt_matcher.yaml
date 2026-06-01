@@ -1,4 +1,4 @@
-dt_matcher_node:
+dt_matcher:
   ros__parameters:
     # 话题名称配置
     sub_voxel_topic: "/dveformer/semantic_voxels"
