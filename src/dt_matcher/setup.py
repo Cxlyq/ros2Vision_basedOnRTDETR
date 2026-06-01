@@ -28,6 +28,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
+            'dt_matcher = dt_matcher.dt_matcher:main'
         ],
     },
 )

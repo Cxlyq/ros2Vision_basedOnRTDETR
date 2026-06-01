@@ -14,7 +14,7 @@ def generate_launch_description():
     # 定义 dt_matcher 节点
     dt_matcher_node = Node(
         package=pkg_name,
-        executable='dt_matcher.py',
+        executable='dt_matcher',
         name='dt_matcher',
         output='screen',
         parameters=[config_path],
